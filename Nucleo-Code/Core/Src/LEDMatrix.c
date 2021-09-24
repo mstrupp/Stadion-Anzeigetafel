@@ -17,7 +17,7 @@ void LEDMatrixInit(LEDMatrix* ledMatrix, uint8_t numLEDs, LED* leds, TIM_HandleT
 	ledMatrix->timerChannel = timerChannel;
 
 	for (uint8_t k = 0; k < ledMatrix->numLEDs; k++) {
-		ledMatrix->leds[k].color = off;
+		LEDInit(ledMatrix->leds[k]);
 	}
 
 	ledMatrix->nextLED = 0;
