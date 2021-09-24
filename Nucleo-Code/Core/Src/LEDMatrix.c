@@ -9,14 +9,14 @@
 
 #include "LEDMatrix.h"
 
-void LEDMatrixInit(LEDMatrix* ledMatrix, uint8_t numLEDs, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel) {
+void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel) {
 	ledMatrix->numLEDs = numLEDs;
 	ledMatrix->leds = leds;
 
 	ledMatrix->htim = htim;
 	ledMatrix->timerChannel = timerChannel;
 
-	for (uint8_t k = 0; k < ledMatrix->numLEDs; k++) {
+	for (uint32_t k = 0; k < ledMatrix->numLEDs; k++) {
 		LEDInit(&ledMatrix->leds[k]);
 	}
 

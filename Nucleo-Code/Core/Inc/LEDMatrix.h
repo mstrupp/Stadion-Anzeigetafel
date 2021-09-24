@@ -13,7 +13,7 @@
 #include "LED.h"
 
 typedef struct {
-	uint8_t numLEDs;
+	uint32_t numLEDs;
 	LED* leds;
 
 	TIM_HandleTypeDef* htim;
@@ -21,10 +21,10 @@ typedef struct {
 
 	// Intern variables
 	uint32_t pwmBuffer[48];
-	uint8_t nextLED;
+	uint32_t nextLED;
 } LEDMatrix;
 
-void LEDMatrixInit(LEDMatrix* ledMatrix, uint8_t numLEDs, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel);
+void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel);
 
 // Send the bit signals for the current LED configuration.
 void LEDMatrixShow(LEDMatrix* ledMatrix);
