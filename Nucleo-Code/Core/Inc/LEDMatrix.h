@@ -21,7 +21,7 @@ typedef struct {
 
 	// Intern variables
 	uint32_t pwmBuffer[48];
-	uint8_t currentLED;
+	uint8_t nextLED;
 } LEDMatrix;
 
 void LEDMatrixInit(LEDMatrix* ledMatrix, uint8_t numLEDs, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel);

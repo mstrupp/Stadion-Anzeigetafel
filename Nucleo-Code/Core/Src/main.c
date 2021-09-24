@@ -33,6 +33,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define numLEDs 5
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -47,9 +48,6 @@ DMA_HandleTypeDef hdma_tim1_ch1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-enum {
-  numLEDs = 5
-};
 LED leds[numLEDs];
 LEDMatrix ledMatrix;
 /* USER CODE END PV */
@@ -86,9 +84,6 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   LEDMatrixInit(&ledMatrix, numLEDs, leds, &htim1, TIM_CHANNEL_1);
-  ledMatrix.leds[0].color = red;
-  ledMatrix.leds[1].color = blue;
-  LEDMatrixShow(&ledMatrix);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -104,13 +99,27 @@ int main(void)
   MX_DMA_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-
+  ledMatrix.leds[0].color = red;
+  ledMatrix.leds[1].color = green;
+  ledMatrix.leds[2].color = blue;
+  ledMatrix.leds[3].color = red;
+  ledMatrix.leds[4].color = green;
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  int k = 0;
   while (1)
   {
+	  ledMatrix.leds[0].color =  k      % 3 + 1;
+	  ledMatrix.leds[1].color = (k + 1) % 3 + 1;
+	  ledMatrix.leds[2].color = (k + 2) % 3 + 1;
+	  ledMatrix.leds[3].color =  k      % 3 + 1;
+	  ledMatrix.leds[4].color = (k + 1) % 3 + 1;
+	  LEDMatrixShow(&ledMatrix);
+	  HAL_Delay(500);
+	  ++k;
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
