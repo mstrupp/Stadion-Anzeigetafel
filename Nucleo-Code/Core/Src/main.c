@@ -339,10 +339,12 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 void HAL_TIM_PWM_PulseFinishedHalfCpltCallback (TIM_HandleTypeDef * htim) {
+	// Fill the DMA buffer with next duty cycles
 	LEDMatrixBufferHalfSentCallback(&ledMatrix);
 }
 
 void HAL_TIM_PWM_PulseFinishedCallback (TIM_HandleTypeDef * htim) {
+	// Fill the DMA buffer with next duty cycles
 	LEDMatrixBufferSentCallback(&ledMatrix);
 }
 

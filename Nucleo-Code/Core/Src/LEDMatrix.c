@@ -32,6 +32,7 @@ void LEDMatrixShow(LEDMatrix* ledMatrix) {
 
 	ledMatrix->nextLED = 2;
 
+	// Start sending the PWM pulses
 	HAL_TIM_PWM_Start_DMA(ledMatrix->htim, ledMatrix->timerChannel, ledMatrix->pwmBuffer, 48);
 }
 
@@ -41,8 +42,10 @@ void LEDMatrixBufferHalfSentCallback(LEDMatrix* ledMatrix) {
 		const uint32_t* dutyCycles = LEDgetDutyCycles(&ledMatrix->leds[ledMatrix->nextLED]);
 		memcpy(&ledMatrix->pwmBuffer[0], dutyCycles, 96);
 	} else {
+		// All color LEDs are sent. Set reset pulse (low signal).
 		memset(&ledMatrix->pwmBuffer[0], 0, 96);
 		if(ledMatrix->nextLED == ledMatrix->numLEDs + 2) {
+			// Reset signal sent. Disable PWM generation.
 			HAL_TIM_PWM_Stop_DMA(ledMatrix->htim, ledMatrix->timerChannel);
 		}
 	}
@@ -50,7 +53,6 @@ void LEDMatrixBufferHalfSentCallback(LEDMatrix* ledMatrix) {
 }
 
 void LEDMatrixBufferSentCallback(LEDMatrix* ledMatrix) {
-	// Fill the second half of the buffer with the next duty cycles
 	if(ledMatrix->nextLED < ledMatrix->numLEDs) {
 		const uint32_t* dutyCycles = LEDgetDutyCycles(&ledMatrix->leds[ledMatrix->nextLED]);
 		memcpy(&ledMatrix->pwmBuffer[24], dutyCycles, 96);

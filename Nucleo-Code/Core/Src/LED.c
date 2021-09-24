@@ -7,6 +7,7 @@
 
 #include "LED.h"
 
+// Duty cycle codes
 static const uint32_t ledCodeOff[24] =		{25, 25, 25, 25, 25, 25, 25, 25,
 										 	 25, 25, 25, 25, 25, 25, 25, 25,
 										 	 25, 25, 25, 25, 25, 25, 25, 25};
