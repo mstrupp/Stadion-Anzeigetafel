@@ -33,7 +33,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define numLEDs 5
+#define numLEDs 35
+#define numCols 5
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -83,7 +84,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  LEDMatrixInit(&ledMatrix, numLEDs, leds, &htim1, TIM_CHANNEL_1);
+  LEDMatrixInit(&ledMatrix, numLEDs, numCols, leds, &htim1, TIM_CHANNEL_1);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -99,19 +100,15 @@ int main(void)
   MX_DMA_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-
+  LEDMatrixClear(&ledMatrix);
+  LEDMatrixSet(&ledMatrix);
+  LEDMatrixSet(&ledMatrix);
+  LEDMatrixShow(&ledMatrix);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int k = 0;
   while (1) {
-	  for (int i = 0; i < numLEDs; ++i) {
-		  ledMatrix.leds[i].color =  (k + (i % 3)) % 3 + 1;
-	  }
-	  LEDMatrixShow(&ledMatrix);
-	  HAL_Delay(500);
-	  ++k;
 
     /* USER CODE END WHILE */
 

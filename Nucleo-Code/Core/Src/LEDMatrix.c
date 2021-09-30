@@ -9,8 +9,11 @@
 
 #include "LEDMatrix.h"
 
-void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel) {
+#include "font.h"
+
+void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel) {
 	ledMatrix->numLEDs = numLEDs;
+	ledMatrix->numCols = numCols;
 	ledMatrix->leds = leds;
 
 	ledMatrix->htim = htim;
@@ -20,7 +23,37 @@ void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, LED* leds, TIM_Handle
 		LEDInit(&ledMatrix->leds[k]);
 	}
 
+	ledMatrix->cursorPos = 0;
+
 	ledMatrix->nextLED = 0;
+}
+
+// Shuts all leds off
+void LEDMatrixClear(LEDMatrix* ledMatrix) {
+	for (int k = 0; k < ledMatrix->numLEDs; ++k) {
+		ledMatrix->leds[k].color = off;
+	}
+	ledMatrix->cursorPos = 0;
+}
+
+// Sets a test letter at the current cursor position
+void LEDMatrixSet(LEDMatrix* ledMatrix) {
+	enum ledColor color = amber;
+
+	for (int line = 0; line < letterA.height; ++line) {
+		for (int col = 0; col < letterA.width; ++col) {
+			if (line % 2 == 0) {
+				// Even line
+				ledMatrix->leds[line * ledMatrix->numCols + col + ledMatrix->cursorPos].color =
+						letterA.matrix[line * letterA.width + col] ? color : off;
+			} else {
+				// Uneven line
+				ledMatrix->leds[line * ledMatrix->numCols + (ledMatrix->numCols - 1 - col) - ledMatrix->cursorPos].color =
+						letterA.matrix[line * letterA.width + col] ? color : off;
+			}
+		}
+	}
+	ledMatrix->cursorPos += letterA.width + 1;
 }
 
 void LEDMatrixShow(LEDMatrix* ledMatrix) {

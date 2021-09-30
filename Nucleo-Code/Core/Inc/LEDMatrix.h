@@ -14,17 +14,26 @@
 
 typedef struct {
 	uint32_t numLEDs;
+	uint8_t numCols;
 	LED* leds;
 
 	TIM_HandleTypeDef* htim;
 	uint32_t timerChannel;
 
 	// Intern variables
+	uint8_t cursorPos;
+	// DMA
 	uint32_t pwmBuffer[48];
 	uint32_t nextLED;
 } LEDMatrix;
 
-void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel);
+void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel);
+
+// Matrix Manipulation
+// Shuts all leds off
+void LEDMatrixClear(LEDMatrix* ledMatrix);
+// Sets a test letter at the current cursor position
+void LEDMatrixSet(LEDMatrix* ledMatrix);
 
 // Send the bit signals for the current LED configuration.
 void LEDMatrixShow(LEDMatrix* ledMatrix);
