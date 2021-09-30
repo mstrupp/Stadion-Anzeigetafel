@@ -99,23 +99,16 @@ int main(void)
   MX_DMA_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  ledMatrix.leds[0].color = red;
-  ledMatrix.leds[1].color = green;
-  ledMatrix.leds[2].color = blue;
-  ledMatrix.leds[3].color = red;
-  ledMatrix.leds[4].color = green;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   int k = 0;
-  while (1)
-  {
-	  ledMatrix.leds[0].color =  k      % 3 + 1;
-	  ledMatrix.leds[1].color = (k + 1) % 3 + 1;
-	  ledMatrix.leds[2].color = (k + 2) % 3 + 1;
-	  ledMatrix.leds[3].color =  k      % 3 + 1;
-	  ledMatrix.leds[4].color = (k + 1) % 3 + 1;
+  while (1) {
+	  for (int i = 0; i < numLEDs; ++i) {
+		  ledMatrix.leds[i].color =  (k + (i % 3)) % 3 + 1;
+	  }
 	  LEDMatrixShow(&ledMatrix);
 	  HAL_Delay(500);
 	  ++k;
