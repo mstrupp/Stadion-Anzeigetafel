@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-enum ledColor {off, red, green, blue, amber};
+enum ledColor {off, red, green, blue, amber, white};
 
 typedef struct {
 	enum ledColor color;
