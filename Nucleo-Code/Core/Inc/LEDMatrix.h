@@ -10,6 +10,7 @@
 
 #include "stm32g0xx_hal.h"
 
+#include "font.h"
 #include "LED.h"
 
 typedef struct {
@@ -32,8 +33,8 @@ void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED*
 // Matrix Manipulation
 // Shuts all leds off
 void LEDMatrixClear(LEDMatrix* ledMatrix);
-// Sets a test letter at the current cursor position
-void LEDMatrixSet(LEDMatrix* ledMatrix);
+// Adds a string to the end of the matrix in the given color
+void LEDMatrixAddText(LEDMatrix* ledMatrix, char text[], Color color);
 
 // Send the bit signals for the current LED configuration.
 void LEDMatrixShow(LEDMatrix* ledMatrix);

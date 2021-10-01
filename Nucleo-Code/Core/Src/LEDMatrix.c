@@ -11,6 +11,29 @@
 
 #include "font.h"
 
+// Private functions
+
+// Set a character at the current cursor position in the given color.
+// The cursor will not move.
+static void LEDMatrixSetCharacter(LEDMatrix* ledMatrix, const Character* character, Color color) {
+	// Iterate over all character cells
+	for (int line = 0; line < character->height; ++line) {
+		for (int col = 0; col < character->width; ++col) {
+			if (line % 2 == 0) {
+				// Even line: LEDs from left to right
+				ledMatrix->leds[line * ledMatrix->numCols + col + ledMatrix->cursorPos].color =
+						character->matrix[line * character->width + col] ? color : off;
+			} else {
+				// Uneven line: LEDs from right to left
+				ledMatrix->leds[line * ledMatrix->numCols + (ledMatrix->numCols - 1 - col) - ledMatrix->cursorPos].color =
+						character->matrix[line * character->width + col] ? color : off;
+			}
+		}
+	}
+}
+
+// Public functions
+
 void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel) {
 	ledMatrix->numLEDs = numLEDs;
 	ledMatrix->numCols = numCols;
@@ -36,24 +59,17 @@ void LEDMatrixClear(LEDMatrix* ledMatrix) {
 	ledMatrix->cursorPos = 0;
 }
 
-// Sets a test letter at the current cursor position
-void LEDMatrixSet(LEDMatrix* ledMatrix) {
-	enum ledColor color = amber;
+// Adds a string to the end of the matrix in the given color
+void LEDMatrixAddText(LEDMatrix* ledMatrix, char text[], Color color) {
+	int len = strlen(text);
 
-	for (int line = 0; line < letterA.height; ++line) {
-		for (int col = 0; col < letterA.width; ++col) {
-			if (line % 2 == 0) {
-				// Even line
-				ledMatrix->leds[line * ledMatrix->numCols + col + ledMatrix->cursorPos].color =
-						letterA.matrix[line * letterA.width + col] ? color : off;
-			} else {
-				// Uneven line
-				ledMatrix->leds[line * ledMatrix->numCols + (ledMatrix->numCols - 1 - col) - ledMatrix->cursorPos].color =
-						letterA.matrix[line * letterA.width + col] ? color : off;
-			}
-		}
+	const Character* character;
+	for (int k = 0; k < len; ++k) {
+		character = getCharacter(text[k]);
+		LEDMatrixSetCharacter(ledMatrix, character, color);
+		// Move the cursor
+		ledMatrix->cursorPos += character->width + 1;
 	}
-	ledMatrix->cursorPos += letterA.width + 1;
 }
 
 void LEDMatrixShow(LEDMatrix* ledMatrix) {

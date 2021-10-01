@@ -101,8 +101,7 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   LEDMatrixClear(&ledMatrix);
-  LEDMatrixSet(&ledMatrix);
-  LEDMatrixSet(&ledMatrix);
+  LEDMatrixAddText(&ledMatrix, "AA", blue);
   LEDMatrixShow(&ledMatrix);
   /* USER CODE END 2 */
 
