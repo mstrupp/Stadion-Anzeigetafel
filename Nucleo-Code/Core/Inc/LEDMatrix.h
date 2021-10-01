@@ -10,7 +10,7 @@
 
 #include "stm32g0xx_hal.h"
 
-#include "font.h"
+#include "Character.h"
 #include "LED.h"
 
 typedef struct {
@@ -43,6 +43,9 @@ void LEDMatrixSetCursorPosition(LEDMatrix* ledMatrix, int position);
 // Matrix Manipulation
 // Shuts all leds off
 void LEDMatrixClear(LEDMatrix* ledMatrix);
+// Set a character at the current cursor position in the given color.
+// The cursor will not move.
+void LEDMatrixSetCharacter(LEDMatrix* ledMatrix, const Character* character, Color color);
 // Adds a string to the end of the matrix in the given color
 void LEDMatrixAddText(LEDMatrix* ledMatrix, char text[], Color color);
 

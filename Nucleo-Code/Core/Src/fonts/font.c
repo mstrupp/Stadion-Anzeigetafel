@@ -5,7 +5,7 @@
  *      Author: michaelstrupp
  */
 
-#include "font.h"
+#include "fonts/font.h"
 
 const Character letterA = {
 		.width = 2,

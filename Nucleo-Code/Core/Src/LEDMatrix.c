@@ -9,34 +9,9 @@
 
 #include "LEDMatrix.h"
 
-#include "font.h"
+#include "fonts/font.h"
 
 // Private functions
-
-// Set a character at the current cursor position in the given color.
-// The cursor will not move.
-static void LEDMatrixSetCharacter(LEDMatrix* ledMatrix, const Character* character, Color color) {
-	int currentCursorPos;;
-	// Iterate over all character cells
-	for (int line = 0; line < character->height; ++line) {
-		currentCursorPos = ledMatrix->cursorPos;
-		for (int col = 0; col < character->width; ++col) {
-			// Check if the column is inside the matrix
-			if (currentCursorPos >= 0 && currentCursorPos < ledMatrix->numCols) {
-				// Even line: LEDs from left to right
-				if (line % 2 == 0) {
-					ledMatrix->leds[line * ledMatrix->numCols + col + ledMatrix->cursorPos].color =
-							character->matrix[line * character->width + col] ? color : off;
-				// Uneven line: LEDs from right to left
-				} else {
-					ledMatrix->leds[line * ledMatrix->numCols + (ledMatrix->numCols - 1 - col) - ledMatrix->cursorPos].color =
-							character->matrix[line * character->width + col] ? color : off;
-				}
-			}
-			currentCursorPos += 1;
-		}
-	}
-}
 
 // The width of a given text in pixels
 static int pixelWidth(char text[]) {
@@ -91,6 +66,31 @@ void LEDMatrixClear(LEDMatrix* ledMatrix) {
 		ledMatrix->leds[k].color = off;
 	}
 	ledMatrix->cursorPos = 0;
+}
+
+// Set a character at the current cursor position in the given color.
+// The cursor will not move.
+void LEDMatrixSetCharacter(LEDMatrix* ledMatrix, const Character* character, Color color) {
+	int currentCursorPos;;
+	// Iterate over all character cells
+	for (int line = 0; line < character->height; ++line) {
+		currentCursorPos = ledMatrix->cursorPos;
+		for (int col = 0; col < character->width; ++col) {
+			// Check if the column is inside the matrix
+			if (currentCursorPos >= 0 && currentCursorPos < ledMatrix->numCols) {
+				// Even line: LEDs from left to right
+				if (line % 2 == 0) {
+					ledMatrix->leds[line * ledMatrix->numCols + col + ledMatrix->cursorPos].color =
+							character->matrix[line * character->width + col] ? color : off;
+				// Uneven line: LEDs from right to left
+				} else {
+					ledMatrix->leds[line * ledMatrix->numCols + (ledMatrix->numCols - 1 - col) - ledMatrix->cursorPos].color =
+							character->matrix[line * character->width + col] ? color : off;
+				}
+			}
+			currentCursorPos += 1;
+		}
+	}
 }
 
 // Adds a string to the the matrix in the given color
