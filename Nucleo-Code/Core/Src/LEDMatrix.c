@@ -16,18 +16,24 @@
 // Set a character at the current cursor position in the given color.
 // The cursor will not move.
 static void LEDMatrixSetCharacter(LEDMatrix* ledMatrix, const Character* character, Color color) {
+	int currentCursorPos;;
 	// Iterate over all character cells
 	for (int line = 0; line < character->height; ++line) {
+		currentCursorPos = ledMatrix->cursorPos;
 		for (int col = 0; col < character->width; ++col) {
-			if (line % 2 == 0) {
+			// Check if the column is inside the matrix
+			if (currentCursorPos >= 0 && currentCursorPos < ledMatrix->numCols) {
 				// Even line: LEDs from left to right
-				ledMatrix->leds[line * ledMatrix->numCols + col + ledMatrix->cursorPos].color =
-						character->matrix[line * character->width + col] ? color : off;
-			} else {
+				if (line % 2 == 0) {
+					ledMatrix->leds[line * ledMatrix->numCols + col + ledMatrix->cursorPos].color =
+							character->matrix[line * character->width + col] ? color : off;
 				// Uneven line: LEDs from right to left
-				ledMatrix->leds[line * ledMatrix->numCols + (ledMatrix->numCols - 1 - col) - ledMatrix->cursorPos].color =
-						character->matrix[line * character->width + col] ? color : off;
+				} else {
+					ledMatrix->leds[line * ledMatrix->numCols + (ledMatrix->numCols - 1 - col) - ledMatrix->cursorPos].color =
+							character->matrix[line * character->width + col] ? color : off;
+				}
 			}
+			currentCursorPos += 1;
 		}
 	}
 }
@@ -59,18 +65,24 @@ void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED*
 	}
 
 	ledMatrix->cursorPos = 0;
-	ledMatrix->alignment = 'l';
+	ledMatrix->alignment = 'a';
 
 	ledMatrix->nextLED = 0;
 }
 
 // Sets the alignment of the text on the matrix.
 // Existing text will not be aligned.
-// char alignment must be 'l' (left), 'c' (center), 'r' (right) or 'a' (append to the right)
+// char alignment must be 'l' (left), 'c' (center), 'r' (right) or 'a' (append to the right of the current position)
 void LEDMatrixSetAlignment(LEDMatrix* ledMatrix, char alignment) {
 	if (alignment == 'l' || alignment == 'c' || alignment == 'r' || alignment == 'a') {
 		ledMatrix->alignment = alignment;
 	}
+}
+
+// Sets the cursor to the given position where 0 is the first column.
+// Cursor position can be negative.
+void LEDMatrixSetCursorPosition(LEDMatrix* ledMatrix, int position) {
+	ledMatrix->cursorPos = position;
 }
 
 // Shuts all leds off
@@ -89,6 +101,8 @@ void LEDMatrixAddText(LEDMatrix* ledMatrix, char text[], Color color) {
 	// Check alignment and set cursor
 	int width = pixelWidth(text);
 	switch (ledMatrix->alignment) {
+		case 'a': // append
+			break;
 		case 'l': // left
 			ledMatrix->cursorPos = 0;
 			break;
@@ -97,8 +111,6 @@ void LEDMatrixAddText(LEDMatrix* ledMatrix, char text[], Color color) {
 			break;
 		case 'r': // right
 			ledMatrix->cursorPos = ledMatrix->numCols - width;
-			break;
-		case 'a': // append
 			break;
 		default:
 			break;
