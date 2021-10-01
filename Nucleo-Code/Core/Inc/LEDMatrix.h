@@ -23,12 +23,18 @@ typedef struct {
 
 	// Intern variables
 	uint8_t cursorPos;
+	char alignment;
 	// DMA
 	uint32_t pwmBuffer[48];
 	uint32_t nextLED;
 } LEDMatrix;
 
 void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel);
+
+// Sets the alignment of the text on the matrix.
+// Existing text will not be aligned.
+// char alignment must be 'l' (left), 'c' (center), 'r' (right) or 'a' (append to the right)
+void LEDMatrixSetAlignment(LEDMatrix* ledMatrix, char alignment);
 
 // Matrix Manipulation
 // Shuts all leds off

@@ -32,6 +32,18 @@ static void LEDMatrixSetCharacter(LEDMatrix* ledMatrix, const Character* charact
 	}
 }
 
+// The width of a given text in pixels
+static int pixelWidth(char text[]) {
+	int len = strlen(text);
+	int width = 0;
+	const Character* character;
+	for (int k = 0; k < len; ++k) {
+		character = getCharacter(text[k]);
+		width += character->width;
+	}
+	return width;
+}
+
 // Public functions
 
 void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel) {
@@ -47,8 +59,18 @@ void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED*
 	}
 
 	ledMatrix->cursorPos = 0;
+	ledMatrix->alignment = 'l';
 
 	ledMatrix->nextLED = 0;
+}
+
+// Sets the alignment of the text on the matrix.
+// Existing text will not be aligned.
+// char alignment must be 'l' (left), 'c' (center), 'r' (right) or 'a' (append to the right)
+void LEDMatrixSetAlignment(LEDMatrix* ledMatrix, char alignment) {
+	if (alignment == 'l' || alignment == 'c' || alignment == 'r' || alignment == 'a') {
+		ledMatrix->alignment = alignment;
+	}
 }
 
 // Shuts all leds off
@@ -59,10 +81,30 @@ void LEDMatrixClear(LEDMatrix* ledMatrix) {
 	ledMatrix->cursorPos = 0;
 }
 
-// Adds a string to the end of the matrix in the given color
+// Adds a string to the the matrix in the given color
+// Respects the currently set alignment.
 void LEDMatrixAddText(LEDMatrix* ledMatrix, char text[], Color color) {
 	int len = strlen(text);
 
+	// Check alignment and set cursor
+	int width = pixelWidth(text);
+	switch (ledMatrix->alignment) {
+		case 'l': // left
+			ledMatrix->cursorPos = 0;
+			break;
+		case 'c': // center
+			ledMatrix->cursorPos = ledMatrix->numCols / 2 - width / 2;
+			break;
+		case 'r': // right
+			ledMatrix->cursorPos = ledMatrix->numCols - width;
+			break;
+		case 'a': // append
+			break;
+		default:
+			break;
+	}
+
+	// Add the characters to the matrix
 	const Character* character;
 	for (int k = 0; k < len; ++k) {
 		character = getCharacter(text[k]);
