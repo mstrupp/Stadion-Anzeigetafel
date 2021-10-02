@@ -29,10 +29,36 @@ Die 24 Bit je Farbcode werden elektrisch über ein Datenkabel an die Chips gesen
 
 Abbildung: Timing der Signale
 
-Die Periode für das Senden einer 0/1-Signals beträgt 1,25µs. Die high/low-Signale haben eine Toleranz von ±150 ns.
+Die Periode für das Senden einer 0/1-Signals beträgt 1,25 µs. Die high/low-Signale haben eine Toleranz von ±150 ns.
 
 Nachdem die Farbcodes aller LEDs gesendet wurden, folgt ein Reset-Signal. Dazu wird die Datenleitung für mindestens 50 µs auf "low" gebracht.
 
 ### Erzeugung der Signale
+
+Der Mikrocontroller verfügt über verschiedene Timer. Ein Timer mit PWM (Pulsweitenmodulation) Unterstützung wird für die Erzeugung der Steuersignale verwendet.
+
+Die PWM-Periode muss wie gefordert auf 1,25 µs, was einer Frequenz von 800 kHz entspricht, gestellt werden.
+Der Timer arbeitet mit einer Frequenz von 64 MHz.
+Wenn der Timer innerhalb von einer Periode von 0 bis 79 zählt und dann zurückgesetzt wird, kann die erforderliche Frequenz erreicht werden.
+
+Durch Einstellen des Tastgrades / Duty Cycles kann das Verhältnis von "high" und "low" innerhalb einer Periode geändert werden.
+
+Bei einem Tastgrad von a = 0,32 wird ein "0"-Signal und bei einem Tastgrad von a = 0,64 ein "1"-Signal erzeugt.
+
+#### Direct Memory Access
+
+Der Tastgrad muss also ständig geändert werden.
+Wenn die CPU dafür benutzt wird, kann nicht sichergestellt werden, dass das Timing eingehalten wird.
+Es würde alle 1,25 µs ein gespeicherter Tastgrad-Wert geladen und ins Timer Register geschrieben werden.
+Außerdem ist die CPU somit während dem Senden eines Signals durchgehend ausgelastet und kann nicht auf andere Signale reagieren.
+
+Deshalb wird die DMA (Direct Memory Access) Funktion des Mikrocontrollers eingesetzt.
+Diese schafft eine direkte Verbindung zwischen den Speicheradressen der Tastgrade und dem PWM Registers des Timers.
+Die CPU startet zu Beginn die DMA-Verbindung.
+Dann wird automatisch nach jeder Timer Periode der neue Tastgrad eingestellt.
+
+![Skizze Direct Memory Access](docs/WS2812B-DMA.svg)
+
+Abbildung: Skizze Direct Memory Access
 
 ### Double Buffering
