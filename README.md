@@ -62,3 +62,49 @@ Dann wird automatisch nach jeder Timer Periode der neue Tastgrad eingestellt.
 Abbildung: Skizze Direct Memory Access
 
 ### Double Buffering
+
+Insgesamt besitzt die Anzeigetafel 840 Pixel.
+Wie beschrieben bekommt jeder Pixel ein 24 Bit langes Datensignal.
+Für jedes Bit muss der Tastgrad angepasst werden.
+Die Tastgrade werden in einem Array gespeichert und dann per DMA an den Timer gegeben.
+In dem Array wird jeder Wert als `uint8_t` gespeichert und belegt somit 1 Byte des RAMs.
+
+Das bedeutet, dass das Array eine Speichergröße von 840 * 24 Byte = 20,16 Kilobyte beansprucht.
+Das übersteigt die Größe des RAMs des Mikrocontrollers (8 Kilobyte) bei weitem.
+
+Double Buffering wird eingesetzt, um den Speicherbedarf stark zu verringern.
+
+Statt ein Array mit allen Tastgraden anzulegen, wird lediglich ein Array mit 48 Einträgen erzeugt.
+Dieses bietet Platz für die Tastgrade von genau zwei LEDs.
+
+Der DMA wird im "Circle Mode" konfiguriert.
+In diesem Modus sendet er das angegebene Array and die ausgewählte Peripherie und startet dann von vorne.
+
+Dieses Verhalten wird ausgenutzt, um alle LEDs mit dem 48 Byte großen Array anzusteuern.
+Zuerst werden die Tastgrade für LED 1 und LED 2 in das Array geladen und der DMA gestartet.
+Sobald das Signal für LED 1 generiert wurde, beginnt der DMA, die Tastgrade für LED 2 weiterzugeben.
+Währenddessen werden die Tastgrade für LED 1 mit den Tastgraden für LED 3 überschrieben.
+Wenn LED 2 gesendet wurde, beginnt der DMA von vorne.
+In der ersten Hälfte des Arrays stehen nun die Tastgrade für LED 3 und dadurch wird das dazugehörige Signal generiert.
+Das Vorgehen wird wiederholt, bis die Signale für alle LEDs gesendet wurden.
+Zuletzt wird der Tastgrad auf "0" gesetzt, um das Reset-Signal zu erzeugen.
+
+![Ablauf des DMA mit Double Buffering](docs/WS2812B-Double-Buffer.svg)
+
+Abbildung: Ablauf des DMA mit Double Buffering
+
+Der DMA löst Interrupts aus, über die das Tastgrade-Array dann angepasst werden kann.
+Wenn die erste Hälfte des Arrays gesendet wurde, wird die Funktion `HAL_TIM_PWM_PulseFinishedHalfCpltCallback` aufgerufen.
+Wenn die zweite Hälfte des Arrays gesendet wurde, wird `HAL_TIM_PWM_PulseFinishedCallback` aufgerufen.
+In diesen Funktionen kann dann das Array mit den neuen Tastgraden befüllt werden.
+
+![Auslösen der Interrupts/Callbacks](docs/WS2812B-Interrupt.svg)
+Abbildung: Auslösen der Interrupts/Callbacks
+
+Die CPU wird beim DMA mit Double Buffering alle 30 µs verwendet.
+Damit wird sie 24 Mal weniger belastet als beim Vorgehen ohne DMA.
+
+Das Tastgrade-Array beinhaltet 48 32-Bit Zahlen.
+Die Speichergröße beträgt damit 192 Byte.
+Dabei spielt es keine Rolle, wie viele LEDs angesteuert werden.
+Somit wird im Vergleich zum DMA ohne Double Buffering nur ein Hundertstel des Speicherplatzes verwendet.
