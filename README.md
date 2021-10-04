@@ -1,5 +1,77 @@
 # Stadion-Anzeigetafel
 
+![Skizze des Projekts](docs/project-overview.png)
+
+Abbildung: Skizze des Projekts
+
+## Zusammenfassung
+
+Bei Leichtathletik Wettkämpfen erfolgt die Zeitmessung mit einer elektronischen Zeitmessanlage.
+Der Startschuss startet die Stoppuhr und ein Zielbildauswerter bestimmt auf den Zielbildern die Zeiten der Läufer.
+
+Während den Rennen wird auf einer Anzeigetafel die verstrichene Zeit dargestellt.
+Außerdem können darauf nach einem Rennen die Zeiten der Läufer angezeigt werden.
+
+In diesem Projekt wird eine Anzeigetafel entwickelt, die mit Zeitmesssystemen der Marke OMEGA kompatibel ist.
+Die Anzeige kann eigenständig oder unterstützend eingesetzt werden.
+Im eigenständigen Aufbau übernimmt sie alle Aufgaben der Anzeigetafel.
+Im unterstützenden Modus werden Zusatzinformationen, wie der Name des Läufers, angezeigt, während eine weitere Anzeigetafel die Zeiten einblendet.
+
+## Technische Daten
+
+Die Namen-Anzeigetafel ist ein LED-Display, das bis zu 8 Buchstaben in einer Zeile anzeigen kann.
+Es ist aus einer Distanz von bis zu 75 m lesbar.
+Der Benutzer kann zwischen verschiedenen Modi wählen, um den Namen, die Bahn oder die Platzierung anzuzeigen.
+Die Helligkeit der Anzeige wird automatisch an die aktuellen Lichtverhältnisse angepasst.
+Das regensichere Gehäuse schützt die Elektronik auch bei schlechtem Wetter mit der Schutzklasse IP24.
+
+## Aufbau
+
+### LED Anzeige
+
+Das Display besteht aus einer LED-Matrix.
+Dafür werden individuell adressierbare LED-Streifen verwendet. Die LED-Streifen haben eine Dichte von 60 LEDs pro Meter.
+Der Pixel-Abstand beträgt etwa 1,7 cm.
+Die Anzeige hat eine Auflösung von 84 x 10 Pixeln.
+Die Maße der Anzeige betragen etwa 140 x 17 cm.
+Jeder Buchstabe ist damit 8 x 10 Pixel bzw. 13 cm x 17 cm groß.
+
+### Mikrocontroller
+
+Die Ergebnis-Daten werden von einem STM Mikrocontroller auf einem Nucleo-32 Board empfangen und aufbereitet.
+Die Daten werden von der Zielbildauswertung über die serielle RS422 Schnittstelle bereitgestellt.
+Der Mikrocontroller berechnet unter den gegeben Benutzer-Einstellungen die Steuerungssignale für das Display.
+
+### Schnittstellen
+
+Für den Daten-Empfang wird der Data-Out Anschluss der OMEGA-Anzeigetafel verwendet.
+Die Verbindung erfolgt über ein Datenkabel mit einem siebenpoligem Tuchel-Anschluss.
+Zum Programmieren des Mikrocontrollers ist außerdem ein USB Anschluss am Gehäuse angebracht.
+
+### Automatische Helligkeitsregulierung
+
+Die Helligkeit der Anzeige wird automatisch an die aktuellen Lichtverhältnisse angepasst.
+Zur Ermittlung der Umgebungshelligkeit wird ein Fotowiderstand eingesetzt.
+Bei starker Sonneneinstrahlung wird zur verbesserten Lesbarkeit die Helligkeit des Displays erhöht.
+Bei Dunkelheit wird die Helligkeit verringert.
+
+### Betriebsmodi
+
+Die Anzeigetafel verfügt über verschiedene Betriebsarten.
+Es kann entweder der Name oder die Startnummer und die Bahn angezeigt werden.
+Über Schalter kann der Bediener auswählen, was angezeigt wird. Ein weiterer Schalter aktiviert das Scrollen von langen Namen, die nicht mit zehn Zeichen dargestellt werden können.
+Über ein Potentiometer kann die Helligkeit manuell justiert werden.
+Das Ein- und Ausschalten des Geräts ist ebenfalls über einen Schalter möglich.
+
+### Spannungsversorgung
+
+Sowohl der Arduino als auch die LED Streifen benötigen eine elektrische Spannung von 5 V. Diese wird über ein externes Netzteil bereitgestellt.
+
+### Gehäuse
+
+Das Gehäuse besteht aus PVC und bietet damit Schutz vor Regen in der Sicherheitsklasse IP24.
+Die Vorderseite besteht aus einer dunklen Plexiglas Scheibe, um die gute Lesbarkeit der Anzeige zu ermöglichen.
+
 ## Steuerung der Anzeige
 
 Die Anzeige besteht aus einer LED-Matrix mit 840 RGB LEDs. Die LEDs sind in Reihen auf LED-Streifen angebracht. Jede einzelne RGB LED besteht aus drei kleinen LEDs in den Farben Rot, Grün und Blau. Durch Kombination der einzelnen Farb-LEDs kann ein breites Farbspektrum erzeugt werden.
@@ -99,6 +171,7 @@ Wenn die zweite Hälfte des Arrays gesendet wurde, wird `HAL_TIM_PWM_PulseFinish
 In diesen Funktionen kann dann das Array mit den neuen Tastgraden befüllt werden.
 
 ![Auslösen der Interrupts/Callbacks](docs/WS2812B-Interrupt.svg)
+
 Abbildung: Auslösen der Interrupts/Callbacks
 
 Die CPU wird beim DMA mit Double Buffering alle 30 µs verwendet.
