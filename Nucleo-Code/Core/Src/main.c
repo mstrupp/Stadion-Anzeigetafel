@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "LED.h"
 #include "LEDMatrix.h"
+#include "animations/SwipeClearAnimation.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -33,7 +34,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define numLEDs 5
+#define numLEDs 35
+#define numCols 5
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -43,6 +45,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
 DMA_HandleTypeDef hdma_tim1_ch1;
 
 UART_HandleTypeDef huart2;
@@ -50,6 +53,8 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 LED leds[numLEDs];
 LEDMatrix ledMatrix;
+
+SwipeClearAnimation swipeClearAnimation;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,6 +63,7 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_DMA_Init(void);
 static void MX_TIM1_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -83,7 +89,9 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  LEDMatrixInit(&ledMatrix, numLEDs, leds, &htim1, TIM_CHANNEL_1);
+  LEDMatrixInit(&ledMatrix, numLEDs, numCols, leds, &htim1, TIM_CHANNEL_1);
+
+  SwipeClearAnimationInit(&swipeClearAnimation, &ledMatrix, &htim2, 500, amber);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -98,27 +106,19 @@ int main(void)
   MX_USART2_UART_Init();
   MX_DMA_Init();
   MX_TIM1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  ledMatrix.leds[0].color = red;
-  ledMatrix.leds[1].color = green;
-  ledMatrix.leds[2].color = blue;
-  ledMatrix.leds[3].color = red;
-  ledMatrix.leds[4].color = green;
+  LEDMatrixClear(&ledMatrix);
+  LEDMatrixAddText(&ledMatrix, "AA", amber);
+  LEDMatrixShow(&ledMatrix);
+
+  HAL_Delay(2000);
+  SwipeClearAnimationStart(&swipeClearAnimation);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int k = 0;
-  while (1)
-  {
-	  ledMatrix.leds[0].color =  k      % 3 + 1;
-	  ledMatrix.leds[1].color = (k + 1) % 3 + 1;
-	  ledMatrix.leds[2].color = (k + 2) % 3 + 1;
-	  ledMatrix.leds[3].color =  k      % 3 + 1;
-	  ledMatrix.leds[4].color = (k + 1) % 3 + 1;
-	  LEDMatrixShow(&ledMatrix);
-	  HAL_Delay(500);
-	  ++k;
+  while (1) {
 
     /* USER CODE END WHILE */
 
@@ -253,6 +253,54 @@ static void MX_TIM1_Init(void)
 }
 
 /**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 64000;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 0;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_OC_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_TIMING;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_OC_ConfigChannel(&htim2, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -338,14 +386,18 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-void HAL_TIM_PWM_PulseFinishedHalfCpltCallback (TIM_HandleTypeDef * htim) {
+void HAL_TIM_PWM_PulseFinishedHalfCpltCallback(TIM_HandleTypeDef * htim) {
 	// Fill the DMA buffer with next duty cycles
 	LEDMatrixBufferHalfSentCallback(&ledMatrix);
 }
 
-void HAL_TIM_PWM_PulseFinishedCallback (TIM_HandleTypeDef * htim) {
+void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef * htim) {
 	// Fill the DMA buffer with next duty cycles
 	LEDMatrixBufferSentCallback(&ledMatrix);
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim) {
+	SwipeClearAnimationCallback(&swipeClearAnimation);
 }
 
 /* USER CODE END 4 */

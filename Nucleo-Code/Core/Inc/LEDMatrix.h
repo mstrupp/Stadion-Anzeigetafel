@@ -10,21 +10,44 @@
 
 #include "stm32g0xx_hal.h"
 
+#include "Character.h"
 #include "LED.h"
 
 typedef struct {
 	uint32_t numLEDs;
+	uint8_t numCols;
 	LED* leds;
 
 	TIM_HandleTypeDef* htim;
 	uint32_t timerChannel;
 
 	// Intern variables
+	int cursorPos;
+	char alignment;
+	// DMA
 	uint32_t pwmBuffer[48];
 	uint32_t nextLED;
 } LEDMatrix;
 
-void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel);
+void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel);
+
+// Sets the alignment of the text on the matrix.
+// Existing text will not be aligned.
+// char alignment must be 'l' (left), 'c' (center), 'r' (right) or 'a' (append to the right of the current position)
+void LEDMatrixSetAlignment(LEDMatrix* ledMatrix, char alignment);
+
+// Sets the cursor to the given position where 0 is the first column.
+// Cursor position can be negative.
+void LEDMatrixSetCursorPosition(LEDMatrix* ledMatrix, int position);
+
+// Matrix Manipulation
+// Shuts all leds off
+void LEDMatrixClear(LEDMatrix* ledMatrix);
+// Set a character at the current cursor position in the given color.
+// The cursor will not move.
+void LEDMatrixSetCharacter(LEDMatrix* ledMatrix, const Character* character, Color color);
+// Adds a string to the end of the matrix in the given color
+void LEDMatrixAddText(LEDMatrix* ledMatrix, char text[], Color color);
 
 // Send the bit signals for the current LED configuration.
 void LEDMatrixShow(LEDMatrix* ledMatrix);
