@@ -33,6 +33,9 @@ static const uint32_t ledCodeAmber[24] = 	{a0, a1, a0, a1, a1, a0, a0, a0,
 static const uint32_t ledCodeWhite[24] = 	{a1, a1, a1, a1, a1, a1, a1, a1,
 											 a1, a1, a1, a1, a1, a1, a1, a1,
 											 a1, a1, a1, a1, a1, a1, a1, a1};
+static const uint32_t ledCodeDebug[24] = 	{a0, a0, a0, a0, a0, a1, a0, a0,
+											 a0, a0, a0, a0, a0, a0, a0, a0,
+											 a0, a0, a0, a0, a0, a0, a0, a0};
 
 void LEDInit(LED* led) {
 	led->color = off;
@@ -52,6 +55,8 @@ const uint32_t* LEDgetDutyCycles(LED* led) {
 			return ledCodeAmber;
 		case white:
 			return ledCodeWhite;
+		case debug:
+			return ledCodeDebug;
 		default:
 			return ledCodeOff;
 	}

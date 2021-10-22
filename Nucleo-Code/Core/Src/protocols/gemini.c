@@ -19,7 +19,7 @@ void geminiGenerateMessage(const uint8_t input[50], Message* message) {
 	} else if (input[1] == 'a') {
 		// name
 		memcpy(message->name, &input[9], 25);
-		message->timeIsValid = 1;
+		message->nameIsValid = 1;
 	} else if (input[1] == 'S') {
 		// result
 		memcpy(message->result, &input[13], 8);
