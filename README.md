@@ -2,8 +2,6 @@
 
 ![Skizze des Projekts](docs/project-overview.png)
 
-Abbildung: Skizze des Projekts
-
 ## Zusammenfassung
 
 Bei Leichtathletik Wettkämpfen erfolgt die Zeitmessung mit einer elektronischen Zeitmessanlage.
@@ -19,7 +17,7 @@ Im unterstützenden Modus werden Zusatzinformationen, wie der Name des Läufers,
 
 ## Technische Daten
 
-Die Namen-Anzeigetafel ist ein LED-Display, das bis zu 8 Buchstaben in einer Zeile anzeigen kann.
+Die Namen-Anzeigetafel ist ein LED-Display, das bis zu 12 Buchstaben in einer Zeile anzeigen kann.
 Es ist aus einer Distanz von bis zu 75 m lesbar.
 Der Benutzer kann zwischen verschiedenen Modi wählen, um den Namen, die Bahn oder die Platzierung anzuzeigen.
 Die Helligkeit der Anzeige wird automatisch an die aktuellen Lichtverhältnisse angepasst.
@@ -32,9 +30,9 @@ Das regensichere Gehäuse schützt die Elektronik auch bei schlechtem Wetter mit
 Das Display besteht aus einer LED-Matrix.
 Dafür werden individuell adressierbare LED-Streifen verwendet. Die LED-Streifen haben eine Dichte von 60 LEDs pro Meter.
 Der Pixel-Abstand beträgt etwa 1,7 cm.
-Die Anzeige hat eine Auflösung von 84 x 10 Pixeln.
+Die Anzeige hat eine Auflösung von 83 x 10 Pixeln.
 Die Maße der Anzeige betragen etwa 140 x 17 cm.
-Jeder Buchstabe ist damit 8 x 10 Pixel bzw. 13 cm x 17 cm groß.
+Jeder Buchstabe ist damit 6 x 10 Pixel bzw. 10 cm x 17 cm groß.
 
 ### Mikrocontroller
 
@@ -182,12 +180,88 @@ Die Speichergröße beträgt damit 192 Byte.
 Dabei spielt es keine Rolle, wie viele LEDs angesteuert werden.
 Somit wird im Vergleich zum DMA ohne Double Buffering nur ein Hundertstel des Speicherplatzes verwendet.
 
+## Programm-Repräsentation der LED-Matrix
+
+Um die Verkabelung zu vereinfachen, sind die LEDs im Zickzack auf der Anzeigetafel aufgebrahcht.
+In der ersten Zeile läuft das Datensignal daher von links nach rechts, in der zweiten von rechts nach links und so weiter.
+Jeder LED wird ein Index, beginnend bei 0, zugeordnet.
+
+Im Programm werden die Farbwerte aller LEDs in einem Array gespeichert.
+Die Indizierung unterscheidet sich dadurch in jeder zweiten Zeile, wie in der folgenden Abbildung dargestellt.
+
+![LED-Matrix und Array Indizierung](docs/Matrix-index.svg)
+
+Abbildung LED-Matrix und Array Indizierung
+
+Wie zu sehen ist, unterscheiden sich die Indizierung der realen LED-Matrix und die des Arrays in jeder zweiten Zeile.
+Um die Buchstaben und Zahlen trotzdem lesbar anzuzeigen, muss der Programmcode entsprechend angepasst werden.
+
+Jedes Zeichen, das angezeigt werden soll, besteht aus einer Matrix.
+Diese gibt an, welche LEDs für dieses Zeichen an- und ausgeschaltet werden sollen.
+
+```C
+const Character char0x41 = { // A
+        .width = 6,
+        .height = 10,
+        .matrix = {
+                0, 0, 1, 1, 0, 0,
+                0, 1, 0, 0, 1, 0,
+                1, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 1,
+                1, 1, 1, 1, 1, 1,
+                1, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 1,
+                1, 0, 0, 0, 0, 1
+        }
+};
+```
+
+Listing: Code für den Buchstaben A
+
+Folgender Code wird dann zum Füllen des Arrays verwendet.
+
+```C
+// Set a character at the current cursor position in the given color.
+void LEDMatrixSetCharacter(LEDMatrix* ledMatrix, const Character* character, Color color) {
+    int currentCursorPos;;
+    // Iterate over all character cells
+    for (int line = 0; line < character->height; ++line) {
+        currentCursorPos = ledMatrix->cursorPos;
+        for (int col = 0; col < character->width; ++col) {
+            // Check if the column is inside the matrix
+            if (currentCursorPos >= 0 && currentCursorPos < ledMatrix->numCols) {
+                // Even line: LEDs from left to right
+                if (line % 2 == 0) {
+                    ledMatrix->leds[line * ledMatrix->numCols + col + ledMatrix->cursorPos].color =
+                            character->matrix[line * character->width + col] ? color : off;
+                // Uneven line: LEDs from right to left
+                } else {
+                    ledMatrix->leds[line * ledMatrix->numCols + (ledMatrix->numCols - 1 - col) - ledMatrix->cursorPos].color =
+                            character->matrix[line * character->width + col] ? color : off;
+                }
+            }
+            currentCursorPos += 1;
+        }
+    }
+}
+```
+
+Listing: Code zum Hinzufügen eines Buchstaben zur Matrix
+
+An die Funktion werden die LED-Matrix, das neue Zeichen und die Farbe übergeben.
+Es wird über jede Zelle der Buchstaben-Matrix iteriert.
+Wenn die berechnete Zelle innerhalb der LED-Matrix liegt, wird die zugehörige LED angeschaltet.
+Mithilfe von `if (line $ 2 == 0)` wird getestet, ob die Zeile gerade oder ungerade ist.
+Wie zuvor beschrieben wird dementsprechend die Beschreibe-Richtung der LED-Matrix angepasst.
+Beim Setzen der LED wird dann außerdem die Farbe dieser LED festgelegt.
+
 ## Referenzen
 
 [1] STMicroelectronics, Description of STM32G0 HAL and low-layer drivers - User manual. 10-2020.
 
-[2]
-STMicroelectronics, STM32G0x1 advanced Arm®-based 32-bit MCUs - Reference manual. 11-2020.
+[2] STMicroelectronics, STM32G0x1 advanced Arm®-based 32-bit MCUs - Reference manual. 11-2020.
 
 [3] Worldsemi, WS2812B Datenblatt. 2021.
 
