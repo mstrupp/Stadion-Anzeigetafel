@@ -196,6 +196,8 @@ Abbildung LED-Matrix und Array Indizierung
 Wie zu sehen ist, unterscheiden sich die Indizierung der realen LED-Matrix und die des Arrays in jeder zweiten Zeile.
 Um die Buchstaben und Zahlen trotzdem lesbar anzuzeigen, muss der Programmcode entsprechend angepasst werden.
 
+### Programm eines Buchstaben, einer Zahl oder anderen Zeichens
+
 Jedes Zeichen, das angezeigt werden soll, besteht aus einer Matrix.
 Diese gibt an, welche LEDs für dieses Zeichen an- und ausgeschaltet werden sollen.
 
@@ -219,6 +221,8 @@ const Character char0x41 = { // A
 ```
 
 Listing: Code für den Buchstaben A
+
+### Programm zum Füllen der LED-Matrix
 
 Folgender Code wird dann zum Füllen des Arrays verwendet.
 
@@ -257,6 +261,46 @@ Mithilfe von `if (line $ 2 == 0)` wird getestet, ob die Zeile gerade oder ungera
 Wie zuvor beschrieben wird dementsprechend die Beschreibe-Richtung der LED-Matrix angepasst.
 Beim Setzen der LED wird dann außerdem die Farbe dieser LED festgelegt.
 
+### Animationen
+
+Unter Benutzung eines weiteren Timers ist es möglich, Animationen auf der Anzeigetafel abzuspielen.
+Der Quellcode dafür befindet sich im Ordner `animations`.
+Die Animation `SwipeClearAnimation` lässt zum Beispiel einen Streifen von links nach rechts über die Anzeige wischen, der dabei all Zeichen löscht.
+
+Bei Animationen ist zu beachten, dass die Aktualisierungsrate der Anzeige von der Anzahl der LEDs abhängt.
+Die Signallänge jeder LED beträgt 1,25 µs.
+Außerdem entsteht durch jede LED eine Verzögerung von 300 ns [3].
+Nach dem Senden aller LED-Signale folgt ein Reset-Puls mit einer Dauer von 50 µs.
+Die benötigte Zeit zum Senden eines gesamten Bildes ergibt sich damit zu
+
+`T = n * (1,25 µs + 0,3 µs) + 50 µs`,
+wobei `n` die Anzahl der LEDs ist.
+
+Für die im Projekt verwendeten n = 830 LEDs ergibt sich damit eine Sendezeit von 1,337 ms.
+Damit liegt die theoretisch mögliche Aktualisierungsrate bei etwa 75 Bildern pro Sekunde.
+Durch Programmausführungen, wie zum Beispiel das Füllen der Matrix wird diese jedoch weiter verringert.
+
+## Empfang der Daten
+
+Die Anzeige-Befehle werden über die RS422 Schnittstelle bereitgestellt.
+Der MAX485 IC leitet die Daten als für den Mikrocontroller lesbares Signal weiter.
+Es gibt verschiedene Protokolle, in denen die Informationen empfangen werden können.
+Das Projekt unterstützt das Gemini sowie das Rollertime Protokoll.
+Die Dekodierunds-Funktionen sind in den Quelldateien im Ordner `protocols` implementiert.
+
+In den Dekodierungs-Funktionen werden die empfangenen Daten anylisert und geprüft, um welchen Datentyp es sich handelt.
+Im Gemini Protokoll kann zum Beispiel enthalten sein:
+
+- Aktuelle Zeit
+- Name eines Athleten
+- Ergebnis eines Athleten
+- Startnummer eines Athleten
+- Bahn eines Athleten
+- Platzierung eines Athleten
+- Clear-Kommando
+
+Je nach empfangenem Signal wird dann entschieden, was auf der Anzeige dargestellt werden soll und die LED-Signale generiert und versendet.
+
 ## Referenzen
 
 [1] STMicroelectronics, Description of STM32G0 HAL and low-layer drivers - User manual. 10-2020.
@@ -266,3 +310,6 @@ Beim Setzen der LED wird dann außerdem die Farbe dieser LED festgelegt.
 [3] Worldsemi, WS2812B Datenblatt. 2021.
 
 [4] M. Tilen, “Tutorial: Control WS2812B leds with STM32,” 2018-06-03. <https://stm32f4-discovery.net/2018/06/tutorial-control-ws2812b-leds-stm32/>
+
+[5] Maxim Integrated, MAX485 Datenblatt. 9-2014.
+  
