@@ -10,16 +10,19 @@
 #include "Character.h"
 
 const Character swipe = {
-		.width = 2,
-		.height = 7,
+		.width = 3,
+		.height = 10,
 		.matrix = {
-				0, 1,
-				0, 1,
-				0, 1,
-				0, 1,
-				0, 1,
-				0, 1,
-				0, 1
+				0, 1, 1,
+				0, 1, 1,
+				0, 1, 1,
+				0, 1, 1,
+				0, 1, 1,
+				0, 1, 1,
+				0, 1, 1,
+				0, 1, 1,
+				0, 1, 1,
+				0, 1, 1,
 		}
 };
 
@@ -62,6 +65,8 @@ void SwipeClearAnimationCallback(SwipeClearAnimation* animation) {
 		// Animation is over, stop the timer
 		} else {
 			HAL_TIM_Base_Stop_IT(animation->htim);
+			LEDMatrixClear(animation->ledMatrix);
+			LEDMatrixShow(animation->ledMatrix);
 			animation->isPlaying = 0;
 		}
 	}

@@ -7,6 +7,8 @@
 
 #include "Scoreboard.h"
 
+#include "stm32g0xx_hal.h"
+
 #include "Message.h"
 #include "protocols/gemini.h"
 
@@ -18,6 +20,9 @@ void ScoreboardInit(Scoreboard* scoreboard, LEDMatrix* ledMatrix, RS485Receiver*
 
 void ScoreboardStart(Scoreboard* scoreboard) {
 	RS485ReceiverStart(scoreboard->receiver);
+
+	LEDMatrixClear(scoreboard->ledMatrix);
+	LEDMatrixShow(scoreboard->ledMatrix);
 }
 
 // Main function that receives inputs and controls the LED matrix.
@@ -29,5 +34,20 @@ void ScoreboardMain(Scoreboard* scoreboard) {
 		Message message;
 		MessageInit(&message);
 		geminiGenerateMessage(scoreboard->receiver->message, &message);
+		if (message.clear) {
+			LEDMatrixClear(scoreboard->ledMatrix);
+			LEDMatrixShow(scoreboard->ledMatrix);
+		}
+		if (message.timeIsValid) {
+			LEDMatrixClear(scoreboard->ledMatrix);
+			LEDMatrixSetAlignment(scoreboard->ledMatrix, 'c');
+			LEDMatrixAddText(scoreboard->ledMatrix, message.time, amber);
+			LEDMatrixShow(scoreboard->ledMatrix);
+		}
+		if (message.nameIsValid) {
+			LEDMatrixClear(scoreboard->ledMatrix);
+			LEDMatrixAddText(scoreboard->ledMatrix, message.name, debug);
+			LEDMatrixShow(scoreboard->ledMatrix);
+		}
 	}
 }

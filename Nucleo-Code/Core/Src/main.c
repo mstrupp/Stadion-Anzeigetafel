@@ -36,8 +36,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define numLEDs 35
-#define numCols 5
+#define numLEDs 830
+#define numCols 83
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -94,7 +94,7 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   LEDMatrixInit(&ledMatrix, numLEDs, numCols, leds, &htim1, TIM_CHANNEL_1);
-  SwipeClearAnimationInit(&swipeClearAnimation, &ledMatrix, &htim2, 500, amber);
+  SwipeClearAnimationInit(&swipeClearAnimation, &ledMatrix, &htim2, 300, amber);
   RS485ReceiverInit(&receiver, &huart1);
 
   ScoreboardInit(&scoreboard, &ledMatrix, &receiver, &swipeClearAnimation);
@@ -120,7 +120,6 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -361,7 +360,7 @@ static void MX_DMA_Init(void)
 
   /* DMA interrupt init */
   /* DMA1_Channel1_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(DMA1_Channel1_IRQn, 3, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel1_IRQn);
 
 }
