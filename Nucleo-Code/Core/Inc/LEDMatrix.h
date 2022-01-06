@@ -21,6 +21,8 @@ typedef struct {
 	TIM_HandleTypeDef* htim;
 	uint32_t timerChannel;
 
+	int isSending;
+
 	// Intern variables
 	int cursorPos;
 	char alignment;

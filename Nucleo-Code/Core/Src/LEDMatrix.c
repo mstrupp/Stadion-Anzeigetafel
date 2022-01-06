@@ -22,6 +22,7 @@ static int pixelWidth(char text[]) {
 		character = getCharacter(text[k]);
 		width += character->width;
 	}
+	width += (len - 1) * 2; // space between letters
 	return width;
 }
 
@@ -38,6 +39,8 @@ void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED*
 	for (uint32_t k = 0; k < ledMatrix->numLEDs; k++) {
 		LEDInit(&ledMatrix->leds[k]);
 	}
+
+	ledMatrix->isSending = 0;
 
 	ledMatrix->cursorPos = 0;
 	ledMatrix->alignment = 'a';
@@ -66,6 +69,7 @@ void LEDMatrixClear(LEDMatrix* ledMatrix) {
 		ledMatrix->leds[k].color = off;
 	}
 	ledMatrix->cursorPos = 0;
+	ledMatrix->alignment = 'a';
 }
 
 // Set a character at the current cursor position in the given color.
@@ -122,21 +126,24 @@ void LEDMatrixAddText(LEDMatrix* ledMatrix, char text[], Color color) {
 		character = getCharacter(text[k]);
 		LEDMatrixSetCharacter(ledMatrix, character, color);
 		// Move the cursor
-		ledMatrix->cursorPos += character->width + 1;
+		ledMatrix->cursorPos += character->width + 2;
 	}
 }
 
 void LEDMatrixShow(LEDMatrix* ledMatrix) {
-	// Fill the buffer with LED 0 and 1
-	const uint32_t* dutyCycles = LEDgetDutyCycles(&ledMatrix->leds[0]);
-	memcpy(&ledMatrix->pwmBuffer[0], dutyCycles, 96);
-	dutyCycles = LEDgetDutyCycles(&ledMatrix->leds[1]);
-	memcpy(&ledMatrix->pwmBuffer[24], dutyCycles, 96);
+	if (ledMatrix->isSending == 0) {
+		// Fill the buffer with LED 0 and 1
+		const uint32_t* dutyCycles = LEDgetDutyCycles(&ledMatrix->leds[0]);
+		memcpy(&ledMatrix->pwmBuffer[0], dutyCycles, 96);
+		dutyCycles = LEDgetDutyCycles(&ledMatrix->leds[1]);
+		memcpy(&ledMatrix->pwmBuffer[24], dutyCycles, 96);
 
-	ledMatrix->nextLED = 2;
+		ledMatrix->nextLED = 2;
+		ledMatrix->isSending = 1;
 
-	// Start sending the PWM pulses
-	HAL_TIM_PWM_Start_DMA(ledMatrix->htim, ledMatrix->timerChannel, ledMatrix->pwmBuffer, 48);
+		// Start sending the PWM pulses
+		HAL_TIM_PWM_Start_DMA(ledMatrix->htim, ledMatrix->timerChannel, ledMatrix->pwmBuffer, 48);
+	}
 }
 
 void LEDMatrixBufferHalfSentCallback(LEDMatrix* ledMatrix) {
@@ -150,6 +157,7 @@ void LEDMatrixBufferHalfSentCallback(LEDMatrix* ledMatrix) {
 		if(ledMatrix->nextLED == ledMatrix->numLEDs + 2) {
 			// Reset signal sent. Disable PWM generation.
 			HAL_TIM_PWM_Stop_DMA(ledMatrix->htim, ledMatrix->timerChannel);
+			ledMatrix->isSending = 0;
 		}
 	}
 	ledMatrix->nextLED += 1;
@@ -163,6 +171,7 @@ void LEDMatrixBufferSentCallback(LEDMatrix* ledMatrix) {
 		memset(&ledMatrix->pwmBuffer[24], 0, 96);
 		if(ledMatrix->nextLED == ledMatrix->numLEDs + 2) {
 			HAL_TIM_PWM_Stop_DMA(ledMatrix->htim, ledMatrix->timerChannel);
+			ledMatrix->isSending = 0;
 		}
 	}
 	ledMatrix->nextLED += 1;

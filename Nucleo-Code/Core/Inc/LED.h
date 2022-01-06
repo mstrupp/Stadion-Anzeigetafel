@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-typedef enum color {off, red, green, blue, amber, white} Color;
+typedef enum color {off, red, green, blue, amber, white, debug} Color;
 
 typedef struct {
 	Color color;
