@@ -15,6 +15,8 @@ Die Anzeige kann eigenständig oder unterstützend eingesetzt werden.
 Im eigenständigen Aufbau übernimmt sie alle Aufgaben der Anzeigetafel.
 Im unterstützenden Modus werden Zusatzinformationen, wie der Name des Läufers, angezeigt, während eine weitere Anzeigetafel die Zeiten einblendet.
 
+![Fertiggestellte Anzeigetafel](docs/product.jpg)
+
 ## Technische Daten
 
 Die Namen-Anzeigetafel ist ein LED-Display, das bis zu 12 Buchstaben in einer Zeile anzeigen kann.
@@ -79,6 +81,8 @@ Die Komponenten werden auf einer Platine mit dem Mikrocontroller und miteinander
 [Schaltplan](PCB-Eagle/Anzeigetafel-Schaltplan.pdf)
 
 [PCB](PCB-Eagle/Anzeigetafel-PCB.pdf)
+
+![Schaltplan](docs/Anzeigetafel-Schaltplan.png)
 
 ## Steuerung der Anzeige
 
