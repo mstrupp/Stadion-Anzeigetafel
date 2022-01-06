@@ -70,6 +70,16 @@ Sowohl der Arduino als auch die LED Streifen benötigen eine elektrische Spannun
 Das Gehäuse besteht aus PVC und bietet damit Schutz vor Regen in der Sicherheitsklasse IP24.
 Die Vorderseite besteht aus einer dunklen Plexiglas Scheibe, um die gute Lesbarkeit der Anzeige zu ermöglichen.
 
+## Schaltplan
+
+Zum Einstellen des Modus werden Kippschalter, Potentiometer und Drehschalter verwendet.
+Außerdem ermitteln Sensoren die Helligkeit und Temperatur.
+Die Komponenten werden auf einer Platine mit dem Mikrocontroller und miteinander verbunden.
+
+[Schaltplan](PCB-Eagle/Anzeigetafel-Schaltplan.pdf)
+
+[PCB](PCB-Eagle/Anzeigetafel-PCB.pdf)
+
 ## Steuerung der Anzeige
 
 Die Anzeige besteht aus einer LED-Matrix mit 840 RGB LEDs. Die LEDs sind in Reihen auf LED-Streifen angebracht. Jede einzelne RGB LED besteht aus drei kleinen LEDs in den Farben Rot, Grün und Blau. Durch Kombination der einzelnen Farb-LEDs kann ein breites Farbspektrum erzeugt werden.
