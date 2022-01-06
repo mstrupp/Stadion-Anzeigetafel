@@ -80,6 +80,8 @@ Die Komponenten werden auf einer Platine mit dem Mikrocontroller und miteinander
 
 [PCB](PCB-Eagle/Anzeigetafel-PCB.pdf)
 
+![Ablauf Steuerung WS2812B ICs](docs/Anzeigetafel-Schaltplan.png)
+
 ## Steuerung der Anzeige
 
 Die Anzeige besteht aus einer LED-Matrix mit 840 RGB LEDs. Die LEDs sind in Reihen auf LED-Streifen angebracht. Jede einzelne RGB LED besteht aus drei kleinen LEDs in den Farben Rot, Grün und Blau. Durch Kombination der einzelnen Farb-LEDs kann ein breites Farbspektrum erzeugt werden.
