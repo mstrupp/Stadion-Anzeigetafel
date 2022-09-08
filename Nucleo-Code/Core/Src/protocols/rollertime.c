@@ -9,7 +9,7 @@
 
 #include <string.h>
 
-// Converts the received time string to a hh:hh:mm format.
+// Converts the received time string to a hh:mm:ss format.
 static void formatTime(char output[8], const uint8_t input[6]) {
 	memcpy(output, input, 2); //hh
 	output[2] = ':';

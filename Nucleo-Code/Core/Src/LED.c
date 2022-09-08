@@ -15,6 +15,7 @@ static const uint32_t a0 = 25;
 static const uint32_t a1 = 50;
 
 // Duty cycle codes
+// Using gamma correction
 static const uint32_t ledCodeOff[24] =		{a0, a0, a0, a0, a0, a0, a0, a0,
 										 	 a0, a0, a0, a0, a0, a0, a0, a0,
 										 	 a0, a0, a0, a0, a0, a0, a0, a0};
@@ -29,6 +30,15 @@ static const uint32_t ledCodeBlue[24] = 	{a0, a0, a0, a0, a0, a0, a0, a0,
 											 a1, a1, a1, a1, a1, a1, a1, a1};
 static const uint32_t ledCodeAmber[24] = 	{a0, a1, a0, a1, a1, a0, a0, a0,
 											 a1, a1, a1, a1, a1, a1, a1, a1,
+											 a0, a0, a0, a0, a0, a0, a0, a0};
+static const uint32_t ledCodeAmber75[24] = 	{a0, a1, a0, a0, a0, a0, a1, a0,
+											 a1, a0, a1, a1, a1, a1, a1, a1,
+											 a0, a0, a0, a0, a0, a0, a0, a0};
+static const uint32_t ledCodeAmber50[24] = 	{a0, a0, a0, a0, a0, a1, a0, a1,
+											 a0, a0, a1, a1, a1, a0, a0, a0,
+											 a0, a0, a0, a0, a0, a0, a0, a0};
+static const uint32_t ledCodeAmber25[24] = 	{a0, a0, a0, a0, a0, a0, a0, a1,
+											 a0, a0, a0, a0, a1, a0, a0, a0,
 											 a0, a0, a0, a0, a0, a0, a0, a0};
 static const uint32_t ledCodeWhite[24] = 	{a1, a1, a1, a1, a1, a1, a1, a1,
 											 a1, a1, a1, a1, a1, a1, a1, a1,
@@ -53,6 +63,12 @@ const uint32_t* LEDgetDutyCycles(LED* led) {
 			return ledCodeBlue;
 		case amber:
 			return ledCodeAmber;
+		case amber75:
+			return ledCodeAmber75;
+		case amber50:
+			return ledCodeAmber50;
+		case amber25:
+			return ledCodeAmber25;
 		case white:
 			return ledCodeWhite;
 		case debug:

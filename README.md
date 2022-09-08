@@ -315,6 +315,14 @@ Im Gemini Protokoll kann zum Beispiel enthalten sein:
 
 Je nach empfangenem Signal wird dann entschieden, was auf der Anzeige dargestellt werden soll und die LED-Signale generiert und versendet.
 
+## Gamma Korrektur
+
+```text
+corrected = ((value / 255) ^ gamma) * 255
+```
+
+Als Gamma Wert wird 2,5 benutzt.
+
 ## Referenzen
 
 [1] STMicroelectronics, Description of STM32G0 HAL and low-layer drivers - User manual. 10-2020.
