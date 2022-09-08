@@ -5,25 +5,37 @@
  *      Author: michaelstrupp
  */
 
-#include "Scoreboard.h"
+#include <stdio.h>
 
 #include "stm32g0xx_hal.h"
 
 #include "Message.h"
 #include "protocols/gemini.h"
+#include "Scoreboard.h"
 
-void ScoreboardInit(Scoreboard* scoreboard, LEDMatrix* ledMatrix, RS485Receiver* receiver, SwipeClearAnimation* swipeClearAnimation, ScrollAnimation* scrollAnimation) {
+void ScoreboardInit(Scoreboard* scoreboard, LEDMatrix* ledMatrix, RS485Receiver* receiver, SwipeClearAnimation* swipeClearAnimation, ScrollAnimation* scrollAnimation, TemperatureSensor* temperatureSensor) {
 	scoreboard->ledMatrix = ledMatrix;
 	scoreboard->receiver = receiver;
+	scoreboard->scrollAnimation = scrollAnimation;
 	scoreboard->swipeClearAnimation = swipeClearAnimation;
+	scoreboard->temperatureSensor = temperatureSensor;
 }
 
 void ScoreboardStart(Scoreboard* scoreboard) {
+	TemperatureSensorStart(scoreboard->temperatureSensor);
+	int temperature = TemperatureSensorMeasure(scoreboard->temperatureSensor);
 	RS485ReceiverStart(scoreboard->receiver);
 
+//	LEDMatrixClear(scoreboard->ledMatrix);
+//	LEDMatrixSetAlignment(scoreboard->ledMatrix, 'c');
+//	LEDMatrixAddText(scoreboard->ledMatrix, "Willkommen", amber);
+//	LEDMatrixShow(scoreboard->ledMatrix);
+
+	char temperatureText[10];
+	sprintf(temperatureText, "%i %cC", temperature, 0xb0);
 	LEDMatrixClear(scoreboard->ledMatrix);
 	LEDMatrixSetAlignment(scoreboard->ledMatrix, 'c');
-	LEDMatrixAddText(scoreboard->ledMatrix, "Willkommen", amber);
+	LEDMatrixAddText(scoreboard->ledMatrix, temperatureText, amber);
 	LEDMatrixShow(scoreboard->ledMatrix);
 }
 

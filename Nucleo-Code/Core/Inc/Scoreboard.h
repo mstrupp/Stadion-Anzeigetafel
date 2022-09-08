@@ -15,19 +15,24 @@
 #include "LED.h"
 #include "LEDMatrix.h"
 #include "RS485Receiver.h"
+#include "TemperatureSensor.h"
 
 typedef struct {
 	// LED matrix
 	LEDMatrix* ledMatrix;
 
 	// animations
+	ScrollAnimation* scrollAnimation;
 	SwipeClearAnimation* swipeClearAnimation;
 
 	// Receiver
 	RS485Receiver* receiver;
+
+	// Temperature Sensor
+	TemperatureSensor* temperatureSensor;
 } Scoreboard;
 
-void ScoreboardInit(Scoreboard* scoreboard, LEDMatrix* ledMatrix, RS485Receiver* receiver, SwipeClearAnimation* swipeClearAnimation, ScrollAnimation* scrollAnimation);
+void ScoreboardInit(Scoreboard* scoreboard, LEDMatrix* ledMatrix, RS485Receiver* receiver, SwipeClearAnimation* swipeClearAnimation, ScrollAnimation* scrollAnimation, TemperatureSensor* temperatureSensor);
 
 void ScoreboardStart(Scoreboard* scoreboard);
 
