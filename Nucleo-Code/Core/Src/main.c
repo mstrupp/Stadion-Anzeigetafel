@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "LED.h"
 #include "LEDMatrix.h"
+#include "animations/ScrollAnimation.h"
 #include "animations/SwipeClearAnimation.h"
 #include "RS485Receiver.h"
 #include "Scoreboard.h"
@@ -56,6 +57,7 @@ UART_HandleTypeDef huart1;
 LED leds[numLEDs];
 LEDMatrix ledMatrix;
 RS485Receiver receiver;
+ScrollAnimation scrollAnimation;
 SwipeClearAnimation swipeClearAnimation;
 
 Scoreboard scoreboard;
@@ -94,10 +96,11 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   LEDMatrixInit(&ledMatrix, numLEDs, numCols, leds, &htim1, TIM_CHANNEL_1);
-  SwipeClearAnimationInit(&swipeClearAnimation, &ledMatrix, &htim2, 300, amber);
+  ScrollAnimationInit(&scrollAnimation, &ledMatrix, &htim2, 100);
+  SwipeClearAnimationInit(&swipeClearAnimation, &ledMatrix, &htim2, 800, amber);
   RS485ReceiverInit(&receiver, &huart1);
 
-  ScoreboardInit(&scoreboard, &ledMatrix, &receiver, &swipeClearAnimation);
+  ScoreboardInit(&scoreboard, &ledMatrix, &receiver, &swipeClearAnimation, &scrollAnimation);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -121,7 +124,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1) {
     /* USER CODE END WHILE */
-
+	  HAL_Delay(1000);
+	  ScrollAnimationStart(&scrollAnimation, "kurz", amber);
+	  HAL_Delay(100000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -429,7 +434,10 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef * htim) {
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim) {
-	SwipeClearAnimationCallback(&swipeClearAnimation);
+	if (htim == &htim2) {
+		ScrollAnimationCallback(&scrollAnimation);
+		SwipeClearAnimationCallback(&swipeClearAnimation);
+	}
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {

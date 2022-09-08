@@ -57,6 +57,38 @@ const Character char0x2C = { // ,
 				1, 0,
 		}
 };
+const Character char0x2D = { // -
+		.width = 5,
+		.height = 10,
+		.matrix = {
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				1, 1, 1, 1, 1,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+		}
+};
+const Character char0x2E = { // .
+		.width = 3,
+		.height = 10,
+		.matrix = {
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0,
+				0, 1, 0,
+				1, 1, 1,
+				0, 1, 0,
+		}
+};
 const Character char0x30 = { // 0
 		.width = 6,
 		.height = 10,
@@ -835,6 +867,10 @@ const Character* getCharacter(const uint8_t character) {
 			return &char0x26;
 		case ',':
 			return &char0x2C;
+		case '-':
+			return &char0x2D;
+		case '.':
+			return &char0x2E;
 		case '0':
 			return &char0x30;
 		case '1':

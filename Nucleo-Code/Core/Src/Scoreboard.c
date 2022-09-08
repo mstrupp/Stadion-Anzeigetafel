@@ -12,7 +12,7 @@
 #include "Message.h"
 #include "protocols/gemini.h"
 
-void ScoreboardInit(Scoreboard* scoreboard, LEDMatrix* ledMatrix, RS485Receiver* receiver, SwipeClearAnimation* swipeClearAnimation) {
+void ScoreboardInit(Scoreboard* scoreboard, LEDMatrix* ledMatrix, RS485Receiver* receiver, SwipeClearAnimation* swipeClearAnimation, ScrollAnimation* scrollAnimation) {
 	scoreboard->ledMatrix = ledMatrix;
 	scoreboard->receiver = receiver;
 	scoreboard->swipeClearAnimation = swipeClearAnimation;

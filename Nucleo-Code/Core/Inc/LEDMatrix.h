@@ -63,4 +63,7 @@ void LEDMatrixShow(LEDMatrix* ledMatrix);
 void LEDMatrixBufferHalfSentCallback(LEDMatrix* ledMatrix);
 void LEDMatrixBufferSentCallback(LEDMatrix* ledMatrix);
 
+// The width of a given text in pixels
+int pixelWidth(const char text[]);
+
 #endif /* INC_LEDMATRIX_H_ */

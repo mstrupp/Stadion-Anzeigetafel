@@ -10,6 +10,7 @@
 
 #include "stm32g0xx_hal.h"
 
+#include "animations/ScrollAnimation.h"
 #include "animations/SwipeClearAnimation.h"
 #include "LED.h"
 #include "LEDMatrix.h"
@@ -26,7 +27,7 @@ typedef struct {
 	RS485Receiver* receiver;
 } Scoreboard;
 
-void ScoreboardInit(Scoreboard* scoreboard, LEDMatrix* ledMatrix, RS485Receiver* receiver, SwipeClearAnimation* swipeClearAnimation);
+void ScoreboardInit(Scoreboard* scoreboard, LEDMatrix* ledMatrix, RS485Receiver* receiver, SwipeClearAnimation* swipeClearAnimation, ScrollAnimation* scrollAnimation);
 
 void ScoreboardStart(Scoreboard* scoreboard);
 
