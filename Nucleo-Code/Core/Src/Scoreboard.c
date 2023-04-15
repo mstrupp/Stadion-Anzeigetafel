@@ -25,18 +25,15 @@ void ScoreboardStart(Scoreboard* scoreboard) {
 	TemperatureSensorStart(scoreboard->temperatureSensor);
 	RS485ReceiverStart(scoreboard->receiver);
 
-	int temperature = TemperatureSensorMeasure(scoreboard->temperatureSensor);
-	char temperatureText[10];
-	sprintf(temperatureText, "%i %cC", temperature, 0xb0);
-	LEDMatrixClear(scoreboard->ledMatrix);
-	LEDMatrixSetAlignment(scoreboard->ledMatrix, 'c');
-	LEDMatrixAddText(scoreboard->ledMatrix, temperatureText, debug);
-	LEDMatrixShow(scoreboard->ledMatrix);
-
+//	int temperature = TemperatureSensorMeasure(scoreboard->temperatureSensor);
+//	char temperatureText[10];
+//	sprintf(temperatureText, "%i %cC", temperature, 0xb0);
 //	LEDMatrixClear(scoreboard->ledMatrix);
 //	LEDMatrixSetAlignment(scoreboard->ledMatrix, 'c');
-//	LEDMatrixAddText(scoreboard->ledMatrix, "Willkommen", amber);
+//	LEDMatrixAddText(scoreboard->ledMatrix, temperatureText, debug);
 //	LEDMatrixShow(scoreboard->ledMatrix);
+
+	ScrollAnimationStart(scoreboard->scrollAnimation, "Walfried-Heinz-Sportfest", debug);
 }
 
 // Main function that receives inputs and controls the LED matrix.

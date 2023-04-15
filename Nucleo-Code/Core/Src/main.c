@@ -57,7 +57,6 @@ DMA_HandleTypeDef hdma_tim1_ch1;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-LED leds[numLEDs];
 LEDMatrix ledMatrix;
 RS485Receiver receiver;
 ScrollAnimation scrollAnimation;
@@ -100,7 +99,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  LEDMatrixInit(&ledMatrix, numLEDs, numCols, leds, &htim1, TIM_CHANNEL_1);
+  LEDMatrixInit(&ledMatrix, numLEDs, numCols, &htim1, TIM_CHANNEL_1);
   ScrollAnimationInit(&scrollAnimation, &ledMatrix, &htim2, 100);
   SwipeClearAnimationInit(&swipeClearAnimation, &ledMatrix, &htim2, 800, amber);
   RS485ReceiverInit(&receiver, &huart1);

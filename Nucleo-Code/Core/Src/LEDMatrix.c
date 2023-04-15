@@ -5,6 +5,7 @@
  *      Author: michaelstrupp
  */
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "LEDMatrix.h"
@@ -28,10 +29,10 @@ int pixelWidth(const char text[]) {
 
 // Public functions
 
-void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED* leds, TIM_HandleTypeDef* htim, uint32_t timerChannel) {
+void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, TIM_HandleTypeDef* htim, uint32_t timerChannel) {
 	ledMatrix->numLEDs = numLEDs;
 	ledMatrix->numCols = numCols;
-	ledMatrix->leds = leds;
+	ledMatrix->leds = (LED*) malloc(numLEDs);
 
 	ledMatrix->htim = htim;
 	ledMatrix->timerChannel = timerChannel;
