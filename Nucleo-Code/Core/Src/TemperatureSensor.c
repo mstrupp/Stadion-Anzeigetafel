@@ -37,7 +37,7 @@ int TemperatureSensorMeasure(TemperatureSensor* self) {
 		value += self->values[k];
 	}
 	value = value >> 5; // Division by 32
-
+	value -= 15; // Calibration
 	float voltage = value * 3.3 / 4095;
 	float temperature = (voltage - 2.982) * 100 + 25;
 	return round(temperature);

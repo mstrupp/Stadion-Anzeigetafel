@@ -4,6 +4,8 @@
 *.launch
 # CDT-specific (C/C++ Development Tooling)
 .cproject
-
 ### C ###
 Debug/
+### Eagle ###
+# Backup files
+*.b##
