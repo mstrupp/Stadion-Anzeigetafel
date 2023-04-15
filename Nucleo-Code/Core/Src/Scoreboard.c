@@ -27,9 +27,9 @@ void ScoreboardStart(Scoreboard* scoreboard) {
 
 	int temperature = TemperatureSensorMeasure(scoreboard->temperatureSensor);
 	char temperatureText[10];
-	sprintf(temperatureText, "E%i %cC", temperature, 0xb0);
+	sprintf(temperatureText, "%i %cC", temperature, 0xb0);
 	LEDMatrixClear(scoreboard->ledMatrix);
-	LEDMatrixSetAlignment(scoreboard->ledMatrix, 'l');
+	LEDMatrixSetAlignment(scoreboard->ledMatrix, 'c');
 	LEDMatrixAddText(scoreboard->ledMatrix, temperatureText, debug);
 	LEDMatrixShow(scoreboard->ledMatrix);
 

@@ -153,8 +153,9 @@ void LEDMatrixBufferHalfSentCallback(LEDMatrix* ledMatrix) {
 		memcpy(&ledMatrix->pwmBuffer[0], dutyCycles, 96);
 	} else {
 		// All color LEDs are sent. Set reset pulse (low signal).
+		// Sending the next 24 bit with zeros results in 72us reset time (measured).
 		memset(&ledMatrix->pwmBuffer[0], 0, 96);
-		if(ledMatrix->nextLED == ledMatrix->numLEDs + 2) {
+		if(ledMatrix->nextLED == ledMatrix->numLEDs + 1) {
 			// Reset signal sent. Disable PWM generation.
 			HAL_TIM_PWM_Stop_DMA(ledMatrix->htim, ledMatrix->timerChannel);
 			ledMatrix->isSending = 0;
@@ -169,7 +170,7 @@ void LEDMatrixBufferSentCallback(LEDMatrix* ledMatrix) {
 		memcpy(&ledMatrix->pwmBuffer[24], dutyCycles, 96);
 	} else {
 		memset(&ledMatrix->pwmBuffer[24], 0, 96);
-		if(ledMatrix->nextLED == ledMatrix->numLEDs + 2) {
+		if(ledMatrix->nextLED == ledMatrix->numLEDs + 1) {
 			HAL_TIM_PWM_Stop_DMA(ledMatrix->htim, ledMatrix->timerChannel);
 			ledMatrix->isSending = 0;
 		}
