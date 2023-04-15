@@ -24,9 +24,11 @@
 /* USER CODE BEGIN Includes */
 #include "LED.h"
 #include "LEDMatrix.h"
+#include "animations/ScrollAnimation.h"
 #include "animations/SwipeClearAnimation.h"
 #include "RS485Receiver.h"
 #include "Scoreboard.h"
+#include "TemperatureSensor.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,6 +48,8 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+ADC_HandleTypeDef hadc1;
+
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
 DMA_HandleTypeDef hdma_tim1_ch1;
@@ -56,7 +60,9 @@ UART_HandleTypeDef huart1;
 LED leds[numLEDs];
 LEDMatrix ledMatrix;
 RS485Receiver receiver;
+ScrollAnimation scrollAnimation;
 SwipeClearAnimation swipeClearAnimation;
+TemperatureSensor temperatureSensor;
 
 Scoreboard scoreboard;
 /* USER CODE END PV */
@@ -68,6 +74,7 @@ static void MX_DMA_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_ADC1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -94,10 +101,11 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   LEDMatrixInit(&ledMatrix, numLEDs, numCols, leds, &htim1, TIM_CHANNEL_1);
-  SwipeClearAnimationInit(&swipeClearAnimation, &ledMatrix, &htim2, 300, amber);
+  ScrollAnimationInit(&scrollAnimation, &ledMatrix, &htim2, 100);
+  SwipeClearAnimationInit(&swipeClearAnimation, &ledMatrix, &htim2, 800, amber);
   RS485ReceiverInit(&receiver, &huart1);
-
-  ScoreboardInit(&scoreboard, &ledMatrix, &receiver, &swipeClearAnimation);
+  TemperatureSensorInit(&temperatureSensor, &hadc1);
+  ScoreboardInit(&scoreboard, &ledMatrix, &receiver, &swipeClearAnimation, &scrollAnimation, &temperatureSensor);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -113,6 +121,7 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_USART1_UART_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
   ScoreboardStart(&scoreboard);
   /* USER CODE END 2 */
@@ -120,6 +129,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1) {
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -172,13 +182,75 @@ void SystemClock_Config(void)
   }
   /** Initializes the peripherals clocks
   */
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_TIM1;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1|RCC_PERIPHCLK_ADC
+                              |RCC_PERIPHCLK_TIM1;
   PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
+  PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_SYSCLK;
   PeriphClkInit.Tim1ClockSelection = RCC_TIM1CLKSOURCE_PCLK1;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief ADC1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_ADC1_Init(void)
+{
+
+  /* USER CODE BEGIN ADC1_Init 0 */
+
+  /* USER CODE END ADC1_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
+
+  /* USER CODE BEGIN ADC1_Init 1 */
+
+  /* USER CODE END ADC1_Init 1 */
+  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
+  */
+  hadc1.Instance = ADC1;
+  hadc1.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc1.Init.Resolution = ADC_RESOLUTION_12B;
+  hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
+  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+  hadc1.Init.LowPowerAutoWait = DISABLE;
+  hadc1.Init.LowPowerAutoPowerOff = DISABLE;
+  hadc1.Init.ContinuousConvMode = ENABLE;
+  hadc1.Init.NbrOfConversion = 1;
+  hadc1.Init.DiscontinuousConvMode = DISABLE;
+  hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+  hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+  hadc1.Init.DMAContinuousRequests = DISABLE;
+  hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
+  hadc1.Init.SamplingTimeCommon1 = ADC_SAMPLETIME_1CYCLE_5;
+  hadc1.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_1CYCLE_5;
+  hadc1.Init.OversamplingMode = ENABLE;
+  hadc1.Init.Oversampling.Ratio = ADC_OVERSAMPLING_RATIO_16;
+  hadc1.Init.Oversampling.RightBitShift = ADC_RIGHTBITSHIFT_4;
+  hadc1.Init.Oversampling.TriggeredMode = ADC_TRIGGEREDMODE_SINGLE_TRIGGER;
+  hadc1.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
+  if (HAL_ADC_Init(&hadc1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Configure Regular Channel
+  */
+  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Rank = ADC_REGULAR_RANK_1;
+  sConfig.SamplingTime = ADC_SAMPLINGTIME_COMMON_1;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN ADC1_Init 2 */
+
+  /* USER CODE END ADC1_Init 2 */
+
 }
 
 /**
@@ -383,6 +455,9 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(NOT_RECEIVER_ENABLE_GPIO_Port, NOT_RECEIVER_ENABLE_Pin, GPIO_PIN_RESET);
+
   /*Configure GPIO pin : T_NRST_Pin */
   GPIO_InitStruct.Pin = T_NRST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
@@ -404,6 +479,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : NOT_RECEIVER_ENABLE_Pin */
+  GPIO_InitStruct.Pin = NOT_RECEIVER_ENABLE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(NOT_RECEIVER_ENABLE_GPIO_Port, &GPIO_InitStruct);
+
 }
 
 /* USER CODE BEGIN 4 */
@@ -419,7 +501,10 @@ void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef * htim) {
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim) {
-	SwipeClearAnimationCallback(&swipeClearAnimation);
+	if (htim == &htim2) {
+		ScrollAnimationCallback(&scrollAnimation);
+		SwipeClearAnimationCallback(&swipeClearAnimation);
+	}
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart) {

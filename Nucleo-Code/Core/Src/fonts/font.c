@@ -25,6 +25,70 @@ const Character char0x20 = { // space
 				0, 0
 		}
 };
+const Character char0x26 = { // &
+		.width = 6,
+		.height = 10,
+		.matrix = {
+				0, 0, 1, 1, 0, 0,
+				0, 1, 0, 0, 1, 0,
+				0, 1, 0, 0, 1, 0,
+				0, 1, 0, 0, 1, 0,
+				0, 0, 1, 1, 0, 0,
+				0, 1, 1, 0, 0, 1,
+				1, 0, 0, 1, 0, 1,
+				1, 0, 0, 0, 1, 0,
+				1, 0, 0, 1, 1, 0,
+				0, 1, 1, 0, 0, 1
+		}
+};
+const Character char0x2C = { // ,
+		.width = 2,
+		.height = 10,
+		.matrix = {
+				0, 0,
+				0, 0,
+				0, 0,
+				0, 0,
+				0, 0,
+				0, 0,
+				1, 1,
+				0, 1,
+				0, 1,
+				1, 0,
+		}
+};
+const Character char0x2D = { // -
+		.width = 5,
+		.height = 10,
+		.matrix = {
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				1, 1, 1, 1, 1,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0,
+		}
+};
+const Character char0x2E = { // .
+		.width = 3,
+		.height = 10,
+		.matrix = {
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0,
+				0, 0, 0,
+				0, 1, 0,
+				1, 1, 1,
+				0, 1, 0,
+		}
+};
 const Character char0x30 = { // 0
 		.width = 6,
 		.height = 10,
@@ -113,7 +177,7 @@ const Character char0x35 = { // 5
 				1, 0, 0, 0, 0, 0,
 				1, 0, 0, 0, 0, 0,
 				1, 1, 1, 1, 1, 0,
-				1, 0, 0, 0, 0, 1,
+				0, 0, 0, 0, 0, 1,
 				0, 0, 0, 0, 0, 1,
 				0, 0, 0, 0, 0, 1,
 				1, 0, 0, 0, 0, 1,
@@ -199,6 +263,22 @@ const Character char0x3A = { // :
 				0, 1, 0,
 				1, 1, 1,
 				0, 1, 0,
+		}
+};
+const Character char0x3F = { // ?
+		.width = 6,
+		.height = 10,
+		.matrix = {
+				0, 1, 1, 1, 1, 0,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				0, 0, 0, 0, 1, 0,
+				0, 0, 0, 1, 0, 0,
+				0, 0, 0, 1, 0, 0,
+				0, 0, 0, 1, 0, 0,
+				0, 0, 0, 0, 0, 0,
+				0, 0, 0, 1, 0, 0,
+				0, 0, 0, 1, 0, 0,
 		}
 };
 const Character char0x41 = { // A
@@ -633,6 +713,38 @@ const Character char0xB0 = { // Degree Sign
 				0, 0, 0, 0,
 		}
 };
+const Character char0xC0 = { // À
+		.width = 6,
+		.height = 10,
+		.matrix = {
+				0, 0, 1, 0, 0, 0,
+				0, 0, 0, 1, 0, 0,
+				0, 0, 0, 0, 0, 0,
+				0, 1, 1, 1, 1, 0,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+		}
+};
+const Character char0xC1 = { // Á
+		.width = 6,
+		.height = 10,
+		.matrix = {
+				0, 0, 0, 1, 0, 0,
+				0, 0, 1, 0, 0, 0,
+				0, 0, 0, 0, 0, 0,
+				0, 1, 1, 1, 1, 0,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+		}
+};
 const Character char0xC4 = { // Ä
 		.width = 6,
 		.height = 10,
@@ -649,20 +761,84 @@ const Character char0xC4 = { // Ä
 				1, 0, 0, 0, 0, 1,
 		}
 };
-const Character char0x3F = { // ?
+const Character char0xC8 = { // È
 		.width = 6,
 		.height = 10,
 		.matrix = {
+				0, 0, 1, 0, 0, 0,
+				0, 0, 0, 1, 0, 0,
+				0, 0, 0, 0, 0, 0,
+				1, 1, 1, 1, 1, 1,
+				1, 0, 0, 0, 0, 0,
+				1, 0, 0, 0, 0, 0,
+				1, 1, 1, 1, 1, 0,
+				1, 0, 0, 0, 0, 0,
+				1, 0, 0, 0, 0, 0,
+				1, 1, 1, 1, 1, 1,
+		}
+};
+const Character char0xC9 = { // É
+		.width = 6,
+		.height = 10,
+		.matrix = {
+				0, 0, 0, 1, 0, 0,
+				0, 0, 1, 0, 0, 0,
+				0, 0, 0, 0, 0, 0,
+				1, 1, 1, 1, 1, 1,
+				1, 0, 0, 0, 0, 0,
+				1, 0, 0, 0, 0, 0,
+				1, 1, 1, 1, 1, 0,
+				1, 0, 0, 0, 0, 0,
+				1, 0, 0, 0, 0, 0,
+				1, 1, 1, 1, 1, 1,
+		}
+};
+const Character char0xD6 = { // Ö
+		.width = 6,
+		.height = 10,
+		.matrix = {
+				0, 1, 0, 0, 1, 0,
+				0, 0, 0, 0, 0, 0,
 				0, 1, 1, 1, 1, 0,
 				1, 0, 0, 0, 0, 1,
 				1, 0, 0, 0, 0, 1,
-				0, 0, 0, 0, 1, 0,
-				0, 0, 0, 1, 0, 0,
-				0, 0, 0, 1, 0, 0,
-				0, 0, 0, 1, 0, 0,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				0, 1, 1, 1, 1, 0,
+		}
+};
+const Character char0xDC = { // Ü
+		.width = 6,
+		.height = 10,
+		.matrix = {
+				0, 1, 0, 0, 1, 0,
 				0, 0, 0, 0, 0, 0,
-				0, 0, 0, 1, 0, 0,
-				0, 0, 0, 1, 0, 0,
+				0, 0, 0, 0, 0, 0,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				1, 0, 0, 0, 0, 1,
+				0, 1, 1, 1, 1, 0,
+		}
+};
+const Character char0xDF = { // ß
+		.width = 6,
+		.height = 10,
+		.matrix = {
+				0, 0, 1, 1, 0, 0,
+				0, 1, 0, 0, 1, 0,
+				0, 1, 0, 0, 1, 0,
+				0, 1, 0, 0, 1, 0,
+				0, 1, 1, 1, 0, 0,
+				0, 1, 0, 0, 1, 0,
+				0, 1, 0, 0, 0, 1,
+				0, 1, 0, 0, 0, 1,
+				0, 1, 0, 0, 0, 1,
+				1, 1, 1, 1, 1, 0,
 		}
 };
 const Character letterHeart = { // heart
@@ -687,6 +863,14 @@ const Character* getCharacter(const uint8_t character) {
 	switch (character) {
 		case ' ':
 			return &char0x20;
+		case '&':
+			return &char0x26;
+		case ',':
+			return &char0x2C;
+		case '-':
+			return &char0x2D;
+		case '.':
+			return &char0x2E;
 		case '0':
 			return &char0x30;
 		case '1':
@@ -789,6 +973,29 @@ const Character* getCharacter(const uint8_t character) {
 			return &char0x5A;
 		case 0xB0: // °
 			return &char0xB0;
+		case 0xE0: // à
+		case 0xC0: // À
+			return &char0xC0;
+		case 0xE1: // á
+		case 0xC1: // Á
+			return &char0xC1;
+		case 0xE4: // ä
+		case 0xC4: // Ä
+			return &char0xC4;
+		case 0xE8: // è
+		case 0xC8: // È
+			return &char0xC8;
+		case 0xE9: // é
+		case 0xC9: // É
+			return &char0xC9;
+		case 0xF6: // ö
+		case 0xD6: // Ö
+			return &char0xD6;
+		case 0xFC: // ü
+		case 0xDC: // Ü
+			return &char0xDC;
+		case 0xDF: // ß
+			return &char0xDF;
 		default:
 			return &char0x3F; // ?
 	}

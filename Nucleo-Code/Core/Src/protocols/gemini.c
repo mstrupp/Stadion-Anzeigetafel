@@ -9,7 +9,7 @@
 
 #include <string.h>
 
-// Casts the input string to a Message object according to the rollertime scoreboard protocol
+// Casts the input string to a Message object according to the gemini scoreboard protocol
 void geminiGenerateMessage(const uint8_t input[50], Message* message) {
 	if (input[1] == 'R') {
 		// time

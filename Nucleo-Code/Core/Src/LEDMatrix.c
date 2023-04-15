@@ -14,7 +14,7 @@
 // Private functions
 
 // The width of a given text in pixels
-static int pixelWidth(char text[]) {
+int pixelWidth(const char text[]) {
 	int len = strlen(text);
 	int width = 0;
 	const Character* character;
@@ -49,7 +49,7 @@ void LEDMatrixInit(LEDMatrix* ledMatrix, uint32_t numLEDs, uint8_t numCols, LED*
 }
 
 // Sets the alignment of the text on the matrix.
-// Existing text will not be aligned.
+// Existing text will not be newly aligned.
 // char alignment must be 'l' (left), 'c' (center), 'r' (right) or 'a' (append to the right of the current position)
 void LEDMatrixSetAlignment(LEDMatrix* ledMatrix, char alignment) {
 	if (alignment == 'l' || alignment == 'c' || alignment == 'r' || alignment == 'a') {
