@@ -17,6 +17,7 @@ typedef struct {
 	uint32_t numLEDs;
 	uint8_t numCols;
 	LED* leds;
+	LED* ledsBuffer;
 
 	TIM_HandleTypeDef* htim;
 	uint32_t timerChannel;
@@ -26,6 +27,7 @@ typedef struct {
 	// Intern variables
 	int cursorPos;
 	char alignment;
+	int showRequest;
 	// DMA
 	uint32_t pwmBuffer[48];
 	uint32_t nextLED;

@@ -100,8 +100,8 @@ int main(void)
 
   /* USER CODE BEGIN Init */
   LEDMatrixInit(&ledMatrix, numLEDs, numCols, &htim1, TIM_CHANNEL_1);
-  ScrollAnimationInit(&scrollAnimation, &ledMatrix, &htim2, 100);
-  SwipeClearAnimationInit(&swipeClearAnimation, &ledMatrix, &htim2, 800, amber);
+  ScrollAnimationInit(&scrollAnimation, &ledMatrix, &htim2, 80);
+  SwipeClearAnimationInit(&swipeClearAnimation, &ledMatrix, &htim2, 2000, debug);
   RS485ReceiverInit(&receiver, &huart1);
   TemperatureSensorInit(&temperatureSensor, &hadc1);
   ScoreboardInit(&scoreboard, &ledMatrix, &receiver, &swipeClearAnimation, &scrollAnimation, &temperatureSensor);
@@ -488,13 +488,17 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 void HAL_TIM_PWM_PulseFinishedHalfCpltCallback(TIM_HandleTypeDef * htim) {
-	// Fill the DMA buffer with next duty cycles
-	LEDMatrixBufferHalfSentCallback(&ledMatrix);
+	if (htim == &htim1) {
+		// Fill the DMA buffer with next duty cycles
+		LEDMatrixBufferHalfSentCallback(&ledMatrix);
+	}
 }
 
 void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef * htim) {
-	// Fill the DMA buffer with next duty cycles
-	LEDMatrixBufferSentCallback(&ledMatrix);
+	if (htim == &htim1) {
+		// Fill the DMA buffer with next duty cycles
+		LEDMatrixBufferSentCallback(&ledMatrix);
+	}
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef * htim) {

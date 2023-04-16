@@ -59,9 +59,10 @@ void SwipeClearAnimationCallback(SwipeClearAnimation* animation) {
 		animation->frame += 1;
 		// Animation is still playing, send the next frame
 		if (animation->frame < animation->frames) {
-			animation->ledMatrix->cursorPos += 1;
+			animation->ledMatrix->cursorPos = -swipe.width + animation->frame;
 			LEDMatrixSetCharacter(animation->ledMatrix, &swipe, animation->color);
 			LEDMatrixShow(animation->ledMatrix);
+
 		// Animation is over, stop the timer
 		} else {
 			HAL_TIM_Base_Stop_IT(animation->htim);

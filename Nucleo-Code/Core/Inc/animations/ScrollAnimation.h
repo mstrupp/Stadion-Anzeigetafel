@@ -13,7 +13,6 @@
 #include "LEDMatrix.h"
 
 typedef struct {
-	char* text;
 	Color color;
 	int scrollDuration;
 
@@ -30,6 +29,8 @@ typedef struct {
 void ScrollAnimationInit(ScrollAnimation* self, LEDMatrix* ledMatrix, TIM_HandleTypeDef* htim, int scrollDuration);
 
 void ScrollAnimationStart(ScrollAnimation *self, char* text, Color color);
+
+void ScrollAnimationStop(ScrollAnimation* self);
 
 void ScrollAnimationCallback(ScrollAnimation* self);
 
