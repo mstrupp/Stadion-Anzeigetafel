@@ -282,17 +282,16 @@ Der Quellcode dafür befindet sich im Ordner `animations`.
 Die Animation `SwipeClearAnimation` lässt zum Beispiel einen Streifen von links nach rechts über die Anzeige wischen, der dabei all Zeichen löscht.
 
 Bei Animationen ist zu beachten, dass die Aktualisierungsrate der Anzeige von der Anzahl der LEDs abhängt.
-Die Signallänge jeder LED beträgt 1,25 µs.
-Außerdem entsteht durch jede LED eine Verzögerung von 300 ns [3].
+Die Signallänge jedes Bits 1,25 µs.
+Für jede LED werden 24 Bit gesendet.
 Nach dem Senden aller LED-Signale folgt ein Reset-Puls mit einer Dauer von 50 µs.
 Die benötigte Zeit zum Senden eines gesamten Bildes ergibt sich damit zu
 
-`T = n * (1,25 µs + 0,3 µs) + 50 µs`,
+`T = n * 24 * 1,25 µs + 50 µs`,
 wobei `n` die Anzahl der LEDs ist.
 
-Für die im Projekt verwendeten n = 830 LEDs ergibt sich damit eine Sendezeit von 1,337 ms.
-Damit liegt die theoretisch mögliche Aktualisierungsrate bei etwa 75 Bildern pro Sekunde.
-Durch Programmausführungen, wie zum Beispiel das Füllen der Matrix wird diese jedoch weiter verringert.
+Für die im Projekt verwendeten n = 830 LEDs ergibt sich damit eine Sendezeit von 24,95 ms.
+Damit liegt die theoretisch mögliche Aktualisierungsrate bei etwa 4 Bildern pro Sekunde.
 
 ## Empfang der Daten
 

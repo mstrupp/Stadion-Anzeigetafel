@@ -74,6 +74,7 @@ void Error_Handler(void);
 #define T_JTCK_GPIO_Port GPIOA
 #define NOT_RECEIVER_ENABLE_Pin GPIO_PIN_15
 #define NOT_RECEIVER_ENABLE_GPIO_Port GPIOA
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
@@ -83,5 +84,3 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

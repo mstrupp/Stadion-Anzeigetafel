@@ -21,22 +21,14 @@ void ScoreboardInit(Scoreboard* scoreboard, LEDMatrix* ledMatrix, RS485Receiver*
 	scoreboard->temperatureSensor = temperatureSensor;
 }
 
-void ScoreboardStart(Scoreboard* scoreboard) {
-	TemperatureSensorStart(scoreboard->temperatureSensor);
-	RS485ReceiverStart(scoreboard->receiver);
+void ScoreboardStart(Scoreboard* self) {
+	TemperatureSensorStart(self->temperatureSensor);
+	RS485ReceiverStart(self->receiver);
 
-	int temperature = TemperatureSensorMeasure(scoreboard->temperatureSensor);
-	char temperatureText[10];
-	sprintf(temperatureText, "%i %cC", temperature, 0xb0);
-	LEDMatrixClear(scoreboard->ledMatrix);
-	LEDMatrixSetAlignment(scoreboard->ledMatrix, 'c');
-	LEDMatrixAddText(scoreboard->ledMatrix, temperatureText, amber);
-	LEDMatrixShow(scoreboard->ledMatrix);
-
-//	LEDMatrixClear(scoreboard->ledMatrix);
-//	LEDMatrixSetAlignment(scoreboard->ledMatrix, 'c');
-//	LEDMatrixAddText(scoreboard->ledMatrix, "Willkommen", amber);
-//	LEDMatrixShow(scoreboard->ledMatrix);
+	LEDMatrixClear(self->ledMatrix);
+	LEDMatrixSetAlignment(self->ledMatrix, 'c');
+	LEDMatrixAddText(self->ledMatrix, "Willkommen", amber);
+	LEDMatrixShow(self->ledMatrix);
 }
 
 // Main function that receives inputs and controls the LED matrix.
@@ -51,6 +43,7 @@ void ScoreboardMain(Scoreboard* scoreboard) {
 		MessageInit(&message);
 		geminiGenerateMessage(scoreboard->receiver->message, &message);
 		if (message.clear) {
+			 ScrollAnimationStop(scoreboard->scrollAnimation);
 			 LEDMatrixClear(scoreboard->ledMatrix);
 			if (clearCount == 2) {
 				LEDMatrixClear(scoreboard->ledMatrix);
@@ -87,29 +80,13 @@ void ScoreboardMain(Scoreboard* scoreboard) {
 
 		if (message.timeIsValid) {
 			if (message.time[0] != ' ') { // Day time
-				int temperature = TemperatureSensorMeasure(scoreboard->temperatureSensor);
-				char temperatureText[10];
-				sprintf(temperatureText, "%i %cC", temperature, 0xb0);
-				LEDMatrixClear(scoreboard->ledMatrix);
-				LEDMatrixSetAlignment(scoreboard->ledMatrix, 'c');
-				LEDMatrixAddText(scoreboard->ledMatrix, temperatureText, color);
-				LEDMatrixShow(scoreboard->ledMatrix);
-//				timeCount += 1;
-//				if (timeCount >= 15) timeCount = 0;
-//				if (timeCount == 1) {
-//					// Show competition name
-//					ScrollAnimationStart(scoreboard->scrollAnimation, "21. SWT-Flutlichtmeeting", color);
-//				} else if (timeCount == 10) {
-//					// Show temperature
-//					char temperatureText[10];
-//					sprintf(temperatureText, "%i %cC", temperature, 0xb0);
-//					LEDMatrixClear(scoreboard->ledMatrix);
-//					LEDMatrixSetAlignment(scoreboard->ledMatrix, 'c');
-//					LEDMatrixAddText(scoreboard->ledMatrix, temperatureText, color);
-//				}
+				if (scoreboard->scrollAnimation->isPlaying == 0) {
+					ScrollAnimationStart(scoreboard->scrollAnimation, "Walfried-Heinz-Sportfest", color);
+				}
 			}
 		}
 		if (message.nameIsValid) {
+			ScrollAnimationStop(scoreboard->scrollAnimation);
 			LEDMatrixClear(scoreboard->ledMatrix);
 			LEDMatrixAddText(scoreboard->ledMatrix, message.name, color);
 			LEDMatrixShow(scoreboard->ledMatrix);
